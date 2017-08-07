@@ -62,23 +62,14 @@
             </el-col>
             <!-- 开始 -->
             <el-col :span="4" class="pct25 mr20">
-                <label class="mr20">开始</label>
-                <el-date-picker
-                		v-model="startTime"
-                        type="datetime"
-                        class="pct70"
-                        placeholder="选择开始日期">
-                </el-date-picker>
-            </el-col>
-            <!-- 结束 -->
-            <el-col :span="4" class="pct25 mr20">
-                <label class="mr20">——</label>
-                <el-date-picker
-                		v-model="endTime"
-                        type="datetime"
-                        placeholder="选择结束时间">
-                </el-date-picker>
-            </el-col>
+	            <label class="mr20">开始</label>
+	            <el-date-picker v-model="startTime" type="datetime" class="pct70" placeholder="选择开始日期"></el-date-picker>
+	        </el-col>
+	        <!-- 结束 -->
+	        <el-col :span="4" class="pct25 mr20">
+	            <label class="mr20">——</label>
+	            <el-date-picker v-model="endTime" type="datetime" placeholder="选择结束时间"></el-date-picker>
+	        </el-col>
             <!-- 查询 -->
             <el-col :span="4" class="pct25">
                 <el-button type="success" class="pct70">查询</el-button>
@@ -159,7 +150,7 @@
 				    </el-table-column>
 			  	</el-table>
 		  		<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageNum"
-			      :page-sizes="[1, 20, 50]"
+			      :page-sizes="[10, 20, 50]"
 			      :page-size="pageSize"
 			      layout="sizes, prev, pager, next, jumper"
 			      :total="totals" class="tc mt20"
@@ -539,23 +530,7 @@
     }
     .tab-bor .active{font-weight: normal;}
     .main-container i{margin: auto 4px;font-size:22px;cursor:pointer;}
-    .main-container .el-icon-information{color:#66BB6A;}
-    .main-container .el-icon-edit{color:#FFCA28;}
-    .main-container .el-icon-delete{color:#EF5350;}
     
-    .el-dialog--small{background: rgba(255,255,255,0);}
-    .infoTitle{height:50px;line-height: 50px;text-align: center;font-size:16px;color:#fff;background: #66BB6A;border-top-left-radius: 4px;border-top-right-radius: 4px;}
-    .el-dialog__header{padding:0px;}
-    .el-dialog__body{padding:0px;}
-    .infoBody{background: #fff;border-bottom-left-radius: 4px;border-bottom-right-radius: 4px;min-height: 500px;padding:10px 40px;}
-    .secondTitle{height:25px;line-height: 25px;font-size:16px;color:#66BB6A;margin:10px 0px;}
-    .infoItems{width: 50%;height:30px;line-height: 30px;}
-    .infoItems .part{width: 50%;color:#272727;font-size:14px;cursor: default;}
-    .infoItems .tr{width:40%;height:30px;}
-    .infoItems .tl{width:58%;margin-left: 2%;}
-    .noList{height: 30px;line-height: 30px;text-align: center;width:100%;color:#c7c7c7;}
-    .el-dialog__headerbtn{font-size:16px;line-height: 50px;padding-right:20px;}
-    .el-dialog__headerbtn .el-dialog__close{color:#fbfdff!important;}
     
     .el-tabs__header{margin:0px;}
     .el-tabs__nav{width:100%;}
@@ -570,13 +545,7 @@
     .el-cascader.is-opened .el-input__inner{border-color: #66BB6A;width:400px}
     .el-cascader .el-input__inner{width: 400px;}
     
-    .editBody{background: #fff;min-height: 500px;padding:10px 40px;}
     .editBody .el-date-editor.el-input{width:220px;}
     
     .el-tabs__nav-wrap{border-top-left-radius: 4px;border-top-right-radius: 4px;}
-    .editBottom{width:100%;border-top:1px #66BB6A solid;padding:20px 0;background: #fff;border-bottom-left-radius: 4px;border-bottom-right-radius: 4px;}
-    .editBottom .l{width: 50%;}
-    .editBottom .l div{width:150px;height: 40px;line-height: 40px;border-radius: 3px;font-size:14px;color:#fff;}
-    .editBottom .l .saveInfo{background: #66BB6A;}
-    .editBottom .l .cancleInfo{background: #333B45;}
 </style>
