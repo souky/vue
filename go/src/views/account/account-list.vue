@@ -69,42 +69,42 @@
     <el-dialog :visible.sync="dialogaccount" :show-close="false">
   		<div class="infoTitle" :model="infoTitles">{{infoTitles}}</div>
   		<div class="editBody">
-				    	<el-form :inline="true" class="demo-form-inline">
+				    	<el-form :inline="true" :rules="rules" ref="user_update" class="demo-form-inline">
 				    		<div class="secondTitle">基本信息</div>
-				    		<el-form-item label="学校" >
-						        <el-select v-model="user.orgId">
-						        	<el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id">
-											</el-option>
+				    		<el-form-item label="学校" prop="schoolId">
+						        <el-select v-model="select_sc" >
+						        	<el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
 								    </el-select>
 						    </el-form-item>
-						    <el-form-item label="角色">
-						        <el-select v-model="user.role">
-							    </el-select>
+						    <el-form-item label="角色" prop="roleId">
+						        <el-select v-model="select_role" >
+						        	<el-option v-for="item in optionRole" :key="item.roleName" :label="item.roleName" :value="item.roleName"></el-option>
+							   		</el-select>
 						    </el-form-item>
-						    <el-form-item label="账户名">
-						      <el-input v-model="user.userName" ></el-input>
+						    <el-form-item label="账户名" prop="userName"> 
+						      <el-input v-model="user.userName"></el-input>
 						    </el-form-item>
-						    <el-form-item label="姓名">
-						      <el-input v-model="user.name" ></el-input>
+						    <el-form-item label="姓名" prop="name">
+						      <el-input v-model="user.name"></el-input>
 						    </el-form-item>
-						    <el-form-item label="联系电话">
-						      <el-input v-model="user.phone" ></el-input>
+						    <el-form-item label="联系电话" prop="phone">
+						      <el-input v-model="user.phone"></el-input>
 						    </el-form-item>
 						    <div v-if="infoTitles=='新建账户'">
 							    <div class="secondTitle">设置密码</div>
-					    		<el-form-item label="初始密码">
-							      <el-input v-model="psw" ></el-input>
+					    		<el-form-item label="初始密码" prop="psws">
+							      <el-input type="password" v-model="user.psw"></el-input>
 							    </el-form-item>
 							    <el-form-item label=" ">
 							    </el-form-item>
-							    <el-form-item label="确认密码">
-							      <el-input v-model="psw_c" ></el-input>
+							    <el-form-item label="确认密码" prop="psw_c_s">
+							      <el-input type="password" v-model="psw_c"></el-input>
 							    </el-form-item>
 						    </div>
 						    <div v-else>
 						    	<div class="secondTitle">密码管理</div>
 						    	<el-form-item label=" ">
-							      <el-button type="success reset" class="pct100 l">重置密码</el-button>
+							      <el-button type="success reset" class="pct100 l" @click="reset_psw()">重置密码</el-button>
 							    </el-form-item>
 						    </div>
 						    <div class="infotext" v-if="passwordnew!=''">
@@ -127,10 +127,43 @@
 <script>
   export default{
     data () {
+    	var validatePass = (rule, value, callback) => {
+        if (this.user.psw == '') {
+          callback(new Error('请输入新密码'));
+        }else if(this.user.psw.length < 6){
+        	callback(new Error('密码长度必须大于6位'));
+        } else {
+          callback();
+        }
+      };
+      var validatePass2 = (rule, value, callback) => {
+        if (this.psw_c == '') {
+          callback(new Error('请再次输入密码'));
+        } else if (this.psw_c != this.user.psw) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
+      var validaSchool = (rule, value, callback) => {
+        if (this.select_sc == '') {
+          callback(new Error('请选择学校'));
+        }else {
+          callback();
+        }
+      };
+      var validaRole = (rule, value, callback) => {
+        if (this.select_role == '') {
+          callback(new Error('请选择角色'));
+        }else {
+          callback();
+        }
+      };
       return {
         msg:'hello vue',
         optionSchool:null,
         optionGrand:null,
+        optionRole:null,
         optionSchool_val:'',
         optionGrand_val:'',
         userName_q:'',
@@ -139,33 +172,71 @@
         infoTitles:'新建账户',
         dialogaccount:false,
         passwordnew:'',
-        user:[],
+        user:{},
+        select_sc:'',
+        select_role:'',
         tableData:[],
         pageNum:1,
         pageSize:10,
         total:0,
         
-        psw:'',
         psw_c:'',
         
+        rules: {
+          psws: [
+            {required: true, validator: validatePass, trigger: 'blur' }
+          ],
+          psw_c_s: [
+            {required: true, validator: validatePass2, trigger: 'blur' }
+          ],
+          schoolId:[
+          	{ required: true, validator: validaSchool, trigger: 'change' },
+          ],
+          roleId:[
+          	{ required: true,validator: validaRole, trigger: 'change' },
+          ],
+          userName:[
+          	{ required: true, message: '请填写账户名', trigger: 'blur' },
+          ],
+          name:[
+          	{ required: true, message: '请填写真实姓名', trigger: 'blur' },
+          ],
+          phone:[
+          	{ required: true, message: '请填写电话', trigger: 'blur' },
+          	{ type: 'number',min: 11, max: 11, message: '手机号格式错误'},
+          ]
+        }
       }
     },
     methods:{
     	dialogadd(){
     		this.infoTitles = "新建账户";
-    		this.user = [];
+    		this.user = {};
+    		this.select_sc = '';
+    		this.select_role = '';
+    		this.psw_c = '';
+    		this.passwordnew = '';
+    		this.user["psw"] = '';
     		this.dialogaccount = true;
+    		var data = {pageNum:1,pageSize:20};
+    		this.postHttp(this,data,"role/queryRoles",this.role_handle);
     	},
     	dialogEdits(id){
     		this.infoTitles = "编辑账户";
     		this.dialogaccount = true;
+    		this.passwordnew = '';
     		var data = {id:id};
     		this.postHttp(this,data,"user/queryUserById",this.editHandle);
+    		
     	},
     	editHandle(obj,data){
     		this.user = data.result;
     		delete this.user["createDate"];
     		delete this.user["updateDate"];
+    		this.select_sc = this.user.orgId;
+    		this.select_role = this.user.role;
+    		var data = {pageNum:1,pageSize:20};
+    		this.postHttp(this,data,"role/queryRoles",this.role_handle);
     	},
     	school_chage(){
     		var id = this.optionSchool_val;
@@ -191,8 +262,17 @@
     		this.total = data.result.total;
     	},
     	saveUser(){
+    		this.user["orgId"] = this.select_sc;
+    		this.user["role"] = this.select_role;
     		var data = this.user;
-    		this.postHttp(this,data,"user/updateUser",this.ajax_handle);
+    		this.$refs['user_update'].validate((valid) => {
+          if (valid) {
+          	this.postHttp(this,data,"user/updateUser",this.ajax_handle);
+          }else{
+          	return;
+          }
+        });
+    		
     	},
     	ajax_handle(obj,data){
     		if(data.code=="10000"){
@@ -207,11 +287,28 @@
     	query_user(){
     		var data_s = ajaxDate(this);
     		initDate(this,data_s);
+    	},
+    	role_handle(obj,data){
+    		this.optionRole = data.result.list;
+    	},
+    	reset_psw(){
+    		var id = this.user.id;
+    		var data = {id:id};
+    		this.postHttp(this,data,"user/initPsw",this.reset_handle);
+    	},
+    	reset_handle(obj,data){
+    		if(data.code=="10000"){
+    			this.notify_jr(this,'重置密码','操作成功','success');
+    			this.passwordnew = data.result;
+    		}else{
+					this.notify_jr(this,'重置密码',data.message,'error');    			
+    		}
     	}
     },
     mounted:function(){
     	this.get_options(this,"","optionSchool");
     	
+    	console.log(this.pageNum)
     	var data = ajaxDate(this);
     	initDate(this,data);
     }
@@ -228,7 +325,6 @@
   	var userName = obj.userName_q;
   	var name = obj.name_q;
   	var data = {pageNum:pageNum,pageSize:pageSize,orgId:orgId,gradeId:gradeId,uesrName:userName,name:name};
-  	console.log(data+"-"+pageSize);
   	return data;
   }
 </script>
