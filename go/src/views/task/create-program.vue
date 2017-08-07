@@ -1,5 +1,5 @@
 <template>
-  <div class="create-program-container">
+  <div id="createProgram" class="create-program-container">
     <!--查询-->
     <el-row type="flex" class="row-bg pt20 pl20" justify="start">
         <!-- 节目类型 -->
@@ -138,22 +138,4 @@
 </script>
 
 <style scoped="scoped" lang="scss">
-  .table-striped{
-    tr,td {
-      height: 40px;
-      line-height: 40px;
-    }
-    td,th {
-      border-right: 1px solid #e9e9e9;
-    }
-    th:last-child{
-      border-right:0;
-    }
-    td:last-child {
-      border-right:0;
-    }
-    tr:last-child td{
-      border-bottom: 0;
-    }
-  }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="course-list-container">
+  <div id="courseList" class="course-list-container">
     <el-row type="flex" class="row-bg pt20 pl20" justify="start">
         <el-col :span="4" class="pct25 mr20 ">
             <label class="mr20">学校  </label>
@@ -54,7 +54,7 @@
         </el-col>
         <!-- 查询 -->
         <el-col :span="4" class="pct25">
-        		<div class="pct18 l" ></div>
+        		<label class="mr20"></label>
             <el-button type="success" class="pct70 l">查询</el-button>
         </el-col>
     </el-row>
@@ -70,7 +70,7 @@
             <label class="mr20"></label>
         </el-col>
         <el-col :span="4" class="pct25">
-        		<div class="pct18 l" ></div>
+        		<label class="mr20"></label>
             <el-button type="primary" class="pct70 l" @click="addCourse()">新增课程</el-button>
         </el-col>
     </el-row>
@@ -175,7 +175,7 @@
 			</div>
 		</el-dialog>
 		
-		<el-dialog :visible.sync="dialogInfo" :show-close="false" >
+		<el-dialog :visible.sync="dialogInfo" :show-close="true" >
   		<div class="infoTitle">详情</div>
   		<div class="infoBody fix" v-model="course">
   			<div class="leftPart l">
@@ -227,14 +227,6 @@
 					<div class="el-form-item__content" style="margin-left: 90px;">
 						<div class="bigSteel">asdasd</div>
 					</div>
-				</div>
-			</div>
-			<div class="editBottom fix">
-				<div class="l">
-					<div class="saveInfo tc poi auto" @click="saveprogarm()">保存</div>
-				</div>
-				<div class="l">
-					<div class="cancleInfo tc poi auto" @click="dialogInfo = false">取消</div>								
 				</div>
 			</div>
 		</el-dialog>
@@ -341,26 +333,26 @@
   }
 </script>
 
-<style scoped="scoped">
-  .el-input__icon {
+<style>
+  #courseList .el-input__icon {
     width: 55px;
   }
-  .pct18{height:1px;}
+  #courseList .pct18{height:1px;}
   
-  .main-container i{margin: auto 4px;font-size:22px;cursor:pointer;}
+  #courseList .main-container i{margin: auto 4px;font-size:22px;cursor:pointer;}
   
-  .addBody{background:#fff;min-height: 500px;padding:20px 40px;}
+  #courseList .addBody{background:#fff;min-height: 500px;padding:20px 40px;}
   
-  .leftPart{width:40%;}
-  .rightPart{width:60%;}
-  .avatar-uploader-icon{border:1px solid #bfcbd9;}
-  .avatar-uploader-icon:hover{border-color:#66BB6A}
-  .leftPart .el-date-editor.el-input{width:100%;}
+  #courseList .leftPart{width:40%;}
+  #courseList .rightPart{width:60%;}
+  #courseList .avatar-uploader-icon{border:1px solid #bfcbd9;}
+  #courseList .avatar-uploader-icon:hover{border-color:#66BB6A}
+  #courseList .leftPart .el-date-editor.el-input{width:100%;}
   
-  .bigSteel{width: 96%;border:1px #BFCBD9 solid;height: 200px;border-radius: 3px;padding:5px 2%;}
-  .infoItems{width: 100%;}
+  #courseList .bigSteel{width: 96%;border:1px #BFCBD9 solid;height: 200px;border-radius: 3px;padding:5px 2%;}
+  #courseList .infoItems{width: 100%;}
   
-  .ml30{margin-left:70px}
-  .rightImg{width:122px;height: 140px;background:#D8D8D8;border: 1px solid #979797;margin-left:20px;}
-  .infoItems .tr{width: 30%;}
+  #courseList .ml30{margin-left:70px}
+  #courseList .rightImg{width:122px;height: 140px;background:#D8D8D8;border: 1px solid #979797;margin-left:20px;}
+  #courseList .infoItems .tr{width: 30%;}
 </style>

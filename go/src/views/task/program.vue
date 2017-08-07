@@ -1,5 +1,5 @@
 <template>
-    <div class="program-container">
+    <div id="program" class="program-container">
         <!-- Tab 部分 -->
         <ul class="tab-bor">
             <li name="programPoi" class="poi active" @click="choiseType('LIVE',$event)">直播</li>
@@ -72,7 +72,8 @@
 	        </el-col>
             <!-- 查询 -->
             <el-col :span="4" class="pct25">
-                <el-button type="success" class="pct70">查询</el-button>
+            	<label class="mr20"></label>
+                <el-button type="success" class="pct70 l">查询</el-button>
             </el-col>
         </el-row>
 
@@ -416,7 +417,8 @@
     },
     mounted:function(){
     	var dataS = {pageNum:1,pageSize:10};
-		programInit(this,dataS);
+		//programInit(this,dataS);
+		this.postHttp(this,dataS,'program/findPrograms',programInit);
 	},
 	methods: {
       dialogInfos(id){
@@ -482,21 +484,11 @@
   }
   
   function programInit(obj,dataS){
- 	obj.$http.post('http://localhost:8888/balanced-education/program/findPrograms',dataS,{emulateJSON: true,credientials:false}).then(response => {
-		var lists = response.data.result.list;
-		for(var i = 0 ;i<lists.length;i++){
-			var startDates = moment(lists[i].startDate).format("YYYY-MM-DD HH:mm:ss");
-			var endDates = moment(lists[i].endDate).format("YYYY-MM-DD HH:mm:ss");
-			lists[i].startDate = startDates;
-			lists[i].endDate = endDates;
-		}
-        obj.tableData = lists;
-        obj.pageNum = response.data.result.pageNum;
-        obj.pageSize = response.data.result.pageSize;
-        obj.totals = response.data.result.total;
-    },response => {
-		console.log(response);
-	})
+    obj.tableData = lists;
+//  obj.pageNum = response.data.result.pageNum;
+//  obj.pageSize = response.data.result.pageSize;
+//  obj.totals = response.data.result.total;
+	console.log(dataS)
   }
   
   
@@ -525,27 +517,27 @@
 </script>
 
 <style>
-    .main-container{
+    #program .main-container{
     	margin-top:20px;
     }
-    .tab-bor .active{font-weight: normal;}
-    .main-container i{margin: auto 4px;font-size:22px;cursor:pointer;}
+    #program .tab-bor .active{font-weight: normal;}
+    #program .main-container i{margin: auto 4px;font-size:22px;cursor:pointer;}
     
     
-    .el-tabs__header{margin:0px;}
-    .el-tabs__nav{width:100%;}
-    .el-tabs__active-bar{height:0px;}
-    .el-tabs__item{width:50%;background: #E4E4E4;color:#272727;text-align: center;height: 50px;line-height: 50px;}
-    .el-tabs__item.is-active{background:#66BB6A;color: #FFFFFF;}
+    #program .el-tabs__header{margin:0px;}
+    #program .el-tabs__nav{width:100%;}
+    #program .el-tabs__active-bar{height:0px;}
+    #program .el-tabs__item{width:50%;background: #E4E4E4;color:#272727;text-align: center;height: 50px;line-height: 50px;}
+    #program .el-tabs__item.is-active{background:#66BB6A;color: #FFFFFF;}
     
-    .el-form--inline .el-form-item{margin-right:0px;width:49%;}
-    .infoBody .el-input__inner{width:220px;}
-    .el-form-item__label{width:35%}
-    .el-form-item__content{width:61%;}
-    .el-cascader.is-opened .el-input__inner{border-color: #66BB6A;width:400px}
-    .el-cascader .el-input__inner{width: 400px;}
+    #program .el-form--inline .el-form-item{margin-right:0px;width:49%;}
+    #program .infoBody .el-input__inner{width:220px;}
+    #program .el-form-item__label{width:35%}
+    #program .el-form-item__content{width:61%;}
+    #program .el-cascader.is-opened .el-input__inner{border-color: #66BB6A;width:400px}
+    #program .el-cascader .el-input__inner{width: 400px;}
     
-    .editBody .el-date-editor.el-input{width:220px;}
+    #program .editBody .el-date-editor.el-input{width:220px;}
     
-    .el-tabs__nav-wrap{border-top-left-radius: 4px;border-top-right-radius: 4px;}
+    #program .el-tabs__nav-wrap{border-top-left-radius: 4px;border-top-right-radius: 4px;}
 </style>

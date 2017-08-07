@@ -10,14 +10,14 @@
 			</div>
 			<div class="loginBody">
 				<el-input size="large" placeholder="请输入用户名" v-model="loginName"></el-input>
-				<el-input size="large" placeholder="请输入密码" v-model="passWord"></el-input>
+				<el-input size="large" type="password" placeholder="请输入密码" v-model="passWord"></el-input>
 				
 				<div class="loginBootm fix">
 					<el-checkbox class="l" v-model="checked">记住我</el-checkbox>
 					<div class="r">忘记密码?</div>
 				</div>
 				
-				<div class="loginButton">
+				<div class="loginButton" @click="login_in()">
 					登录
 				</div>
 			</div>
@@ -40,14 +40,40 @@
     	var heightOfset = (height - 500)/2;
     	console.log(height+'--'+heightOfset)
     	document.getElementById("loginMains").style.marginTop = heightOfset+"px";
+    },
+    methods:{
+    	login_in(){
+    		var userName = this.loginName;
+    		var psw = this.passWord;
+    		var data = {userName:userName,psw:psw};
+    		//console.log(data)
+    		this.postHttp(this,data,'login',login_press);
+    	},
+    	
     }
+  }
+  
+  function login_press(obj,data){
+  	var code = data.code;
+  	if(code != "10000") {
+  		obj.$notify({
+	      title: '错误',
+	      message: data.message,
+	      offset: 100,
+	      type:'error'
+	    });
+  	}else{
+  		obj.$router.push({ path: '/home' });
+  	}
+  	
   }
 </script>
 
 <style>
-html,body{
-	background: #f5f5f5;
+body{
+	background: rgba(0,0,0,0);
 }
+html{background: url(../../dist/static/img/login_background.jpg) no-repeat;}
 .loginMain{width: 1000px;height: 400px;margin:100px auto;background: #fff;border-radius: 4px;}
 .loginImg{width: 498px;}
 .loginImg img{width: 498px;height: 400px;}

@@ -1,9 +1,9 @@
 <template>
-  <div class="course-video-container">
+  <div id="courseVideo" class="course-video-container">
   	
   	<ul class="tab-bor">
-	    <li name="programPoi" class="poi active" @click="choiseType('LIVE',$event)">课堂视频</li>
-	    <li name="programPoi" class="poi" @click="choiseType('RECORD',$event)">教辅文件</li>
+	    <li name="programPoi" class="poi active" @click="choiseType('video',$event)">课堂视频</li>
+	    <li name="programPoi" class="poi" @click="choiseType('supplementary',$event)">教辅文件</li>
 	</ul>
     <el-row type="flex" class="row-bg pt20 pl20" justify="start">
         <el-col :span="4" class="pct25 mr20 ">
@@ -50,7 +50,7 @@
         </el-col>
         <!-- 查询 -->
         <el-col :span="4" class="pct25">
-        		<div class="pct18 l" ></div>
+        		<label class="mr20"></label>
             <el-button type="success" class="pct70 l">查询</el-button>
         </el-col>
     </el-row>
@@ -66,7 +66,7 @@
             <label class="mr20"></label>
         </el-col>
         <el-col :span="4" class="pct25">
-        		<div class="pct18 l" ></div>
+        		<label class="mr20"></label>
             <el-button type="primary" class="pct70 l" @click="upload()">上传课堂视频</el-button>
         </el-col>
     </el-row>
@@ -105,6 +105,12 @@
 				      <el-radio :label="1" name="isCourse">是</el-radio>
 				      <el-radio :label="0" name="isCourse">否</el-radio>
 				    </el-radio-group>
+			    </el-form-item>
+			    <el-form-item label="资源类型" v-if="supplementary">
+			        <el-select :model="course.source"  :key="course.source" :value="course.source">
+					      <el-option label="DOC" value="1"></el-option>
+					      <el-option label="EXCLE" value="2"></el-option>
+					    </el-select>
 			    </el-form-item>
 			    <el-form-item label="课程简介" class="moreinfo">
 				    <el-input type="textarea" :rows="4" resize="none"></el-input>
@@ -154,6 +160,48 @@
 		<el-dialog :visible.sync="dialogEdit" :show-close="false" >
   		<div class="infoTitle">修改    </div>
   		<div class="editBody fix">
+  			<el-form :inline="true" :model="course" class="demo-form-inline">
+  				<div class="secondTitle">视频信息</div>
+  				<el-form-item label="是否公开" style="width: 45%;padding-left: 4%;">
+			    	<el-radio-group  style="margin-left:30px;" v-model="course.ispublic">
+				      <el-radio :label="1" name="isCourse">是</el-radio>
+				      <el-radio :label="0" name="isCourse">否</el-radio>
+				    </el-radio-group>
+			    </el-form-item>
+			    <el-form-item label="课程简介" class="moreinfo">
+				    <el-input type="textarea" :rows="4" resize="none"></el-input>
+				  </el-form-item>
+				  <div class="secondTitle">当前课程信息</div>
+			    <el-form-item label="学校" >
+			        <el-select v-model="course.schoolId">
+				      <el-option label="区域一" value="22"></el-option>
+				      <el-option label="区域二" value="23"></el-option>
+				    </el-select>
+			    </el-form-item>
+			    <el-form-item label="年级" >
+			        <el-select v-model="course.gradeId">
+				      <el-option label="区域一" value="3"></el-option>
+				      <el-option label="区域二" value="4"></el-option>
+				    </el-select>
+			    </el-form-item>
+			    <el-form-item label="教师" >
+			        <el-select v-model="course.teacherId">
+				      <el-option label="区域一" value="12"></el-option>
+				      <el-option label="区域二" value="123"></el-option>
+				    </el-select>
+			    </el-form-item>
+			    <el-form-item label="学科" >
+			        <el-select v-model="course.subject">
+				      <el-option label="区域一" value="shanghai"></el-option>
+				      <el-option label="区域二" value="beijing"></el-option>
+				    </el-select>
+			    </el-form-item>
+			    <el-form-item label="大纲" >
+			        <el-cascader :options="optionss" v-model="selectedOptions" style="width: 400px;">
+				    </el-cascader>
+			    </el-form-item>
+				  
+  			</el-form>
 			</div>
 			<div class="editBottom fix">
 				<div class="l">
@@ -194,8 +242,10 @@
         optionss: [{
           
         }],
+        selectedOptions:[],
         dialogUpload:false,
         dialogEdit:false,
+        supplementary:false,
         tableData:[
 	        {
 	        	id:1,
@@ -221,17 +271,30 @@
 	        	ispublic:0
 	        }
         ],
-        course:{
-        	ispublic:1,
-        }
+		    course:{
+		    	ispublic:1,
+		    	source:1
+		    }
       }
     },
 		methods:{
 			upload(){
 				this.dialogUpload = true;
 			},
-			choiseType(names,event){
-				
+			choiseType(type,event){
+				var obje = event.currentTarget;
+		  	var reg = new RegExp('(\\s|^)active(\\s|$)');  
+		  	var list = document.getElementsByName("programPoi");
+		  	for(var i = 0;i<list.length;i++){
+		  		var e = list[i];
+		  		e.className = e.className.replace(reg,' ');
+		  	}
+		  	obje.className += ' active';
+				if(type=="supplementary"){
+					this.supplementary = true;
+				}else{
+					this.supplementary = false;
+				}
 			},
 			isPublic(row, column){
 				if(row.ispublic=="1"){
@@ -247,13 +310,20 @@
   }
 </script>
 
-<style scoped="scoped">
-  .el-input__icon {
+<style>
+  #courseVideo .el-input__icon {
     width: 55px;
   }
-  .pct18{height:1px;}
-  .main-container i{margin: auto 4px;font-size:22px;cursor:pointer;}
+  #courseVideo .pct18{height:1px;}
+  #courseVideo .main-container i{margin: auto 4px;font-size:22px;cursor:pointer;}
   
-  .moreinfo{width:100%!important;}
-  .moreinfo .el-form-item__label{width:17%!important;}
+  #courseVideo .tab-bor .active{font-weight: normal;}
+  #courseVideo .moreinfo{width:100%!important;}
+  #courseVideo .moreinfo label{width:17%!important;}
+  #courseVideo .editBody{background: #fff;min-height: 500px;padding:10px 40px;}
+  #courseVideo .el-form--inline .el-form-item{margin-right:0px;width:49%;}
+  #courseVideo .el-form-item__label{width:35%}
+	#courseVideo .el-form-item__content{width:61%;}
+	#courseVideo .el-cascader.is-opened .el-input__inner{border-color: #66BB6A;width:400px}
+	#courseVideo .el-cascader .el-input__inner{width: 400px;}
 </style>
