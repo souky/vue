@@ -69,7 +69,7 @@
     <el-dialog :visible.sync="dialogaccount" :show-close="false">
   		<div class="infoTitle" :model="infoTitles">{{infoTitles}}</div>
   		<div class="editBody">
-				    	<el-form :inline="true" :rules="rules" ref="user_update" class="demo-form-inline">
+				    	<el-form :inline="true" :model="user" :rules="rules" ref="user_update" class="demo-form-inline">
 				    		<div class="secondTitle">基本信息</div>
 				    		<el-form-item label="学校" prop="schoolId">
 						        <el-select v-model="select_sc" >
@@ -183,19 +183,7 @@
         psw_c:'',
         
         rules: {
-          psws: [
-            {required: true, validator: validatePass, trigger: 'blur' }
-          ],
-          psw_c_s: [
-            {required: true, validator: validatePass2, trigger: 'blur' }
-          ],
-          schoolId:[
-          	{ required: true, validator: validaSchool, trigger: 'change' },
-          ],
-          roleId:[
-          	{ required: true,validator: validaRole, trigger: 'change' },
-          ],
-          userName:[
+    	 		userName:[
           	{ required: true, message: '请填写账户名', trigger: 'blur' },
           ],
           name:[
@@ -203,15 +191,28 @@
           ],
           phone:[
           	{ required: true, message: '请填写电话', trigger: 'blur' },
-          	{ type: 'number',min: 11, max: 11, message: '手机号格式错误'},
+          	{ min: 11, max: 11, message: '手机号格式错误'}
+          ],
+          psws: [
+            {required: true, validator: validatePass, trigger: 'blur' }
+          ],
+          psw_c_s: [
+            {required: true, validator: validatePass2, trigger: 'blur' }
+          ],
+          schoolId:[
+          	{ required: true, validator: validaSchool, trigger: 'change' }
+          ],
+          roleId:[
+          	{ required: true,validator: validaRole, trigger: 'change' }
           ]
+         
         }
       }
     },
     methods:{
     	dialogadd(){
     		this.infoTitles = "新建账户";
-    		this.user = {};
+    		this.user = {userName:'',name:'',phone:''};
     		this.select_sc = '';
     		this.select_role = '';
     		this.psw_c = '';
@@ -265,6 +266,7 @@
     		this.user["orgId"] = this.select_sc;
     		this.user["role"] = this.select_role;
     		var data = this.user;
+    		
     		this.$refs['user_update'].validate((valid) => {
           if (valid) {
           	this.postHttp(this,data,"user/updateUser",this.ajax_handle);

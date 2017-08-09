@@ -2,55 +2,36 @@
     <div id="program" class="program-container">
         <!-- Tab 部分 -->
         <ul class="tab-bor">
-            <li name="programPoi" class="poi active" @click="choiseType('LIVE',$event)">直播</li>
+        	<li name="programPoi" class="poi active" @click="choiseType('',$event)">全部</li>
+            <li name="programPoi" class="poi" @click="choiseType('LIVE',$event)">直播</li>
             <li name="programPoi" class="poi" @click="choiseType('RECORD',$event)">录制</li>
-            <li name="programPoi" class="poi" @click="choiseType('点播',$event)">点播</li>
+            <li name="programPoi" class="poi" @click="choiseType('VOD',$event)">点播</li>
         </ul>
 
         <el-row type="flex" class="row-bg mt20 pl20" justify="start">
             <el-col :span="4" class="pct25 mr20 ">
                 <label class="mr20">学校  </label>
-                <el-select v-model="value" class="pct70" placeholder="请选择学校">
-                    <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                    </el-option>
-                </el-select>
+                <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="school_chage_q()">
+		            <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
+		        </el-select>
             </el-col>
             <el-col :span="4" class="pct25 mr20">
                 <label class="mr20">年级</label>
-                <el-select v-model="value" class="pct70" placeholder="请选择年级">
-                    <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                    </el-option>
-                </el-select>
+                <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级">
+	                <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
+	            </el-select>
             </el-col>
             <el-col :span="4" class="pct25 mr20">
                 <label class="mr20">教师</label>
-                <el-select v-model="value" class="pct70" placeholder="请选择教师">
-                    <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                    </el-option>
-                </el-select>
+                <el-select v-model="optionTeacher_val" class="pct70" placeholder="请选择教师">
+	                <el-option v-for="item in optionTeacher" :key="item.id" :label="item.name" :value="item.id"></el-option>
+	            </el-select>
             </el-col>
             <el-col :span="4" class="pct25">
                 <label class="mr20">学科</label>
-                <el-select v-model="value" class="pct70" placeholder="请选择学科">
-                    <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                    </el-option>
-                </el-select>
+                <el-select v-model="optionSubject_val" class="pct70" placeholder="请选择学科">
+	                <el-option v-for="item in optionSubject" :key="item.dicCode" :label="item.dicName" :value="item.dicCode"></el-option>
+	            </el-select>
             </el-col>
         </el-row>
 
@@ -58,106 +39,53 @@
             <!-- 节目名 -->
             <el-col :span="4" class="pct25 mr20">
                 <label class="mr20">节目</label>
-                <el-input class="pct70" placeholder="请输入节目名"></el-input>
+                <el-input class="pct70" v-model="name_q" placeholder="请输入节目名"></el-input>
             </el-col>
             <!-- 开始 -->
             <el-col :span="4" class="pct25 mr20">
 	            <label class="mr20">开始</label>
-	            <el-date-picker v-model="startTime" type="datetime" class="pct70" placeholder="选择开始日期"></el-date-picker>
+	            <el-date-picker v-model="queryStartDate" type="datetime" class="pct70" placeholder="选择开始日期"></el-date-picker>
 	        </el-col>
 	        <!-- 结束 -->
 	        <el-col :span="4" class="pct25 mr20">
 	            <label class="mr20">——</label>
-	            <el-date-picker v-model="endTime" type="datetime" placeholder="选择结束时间"></el-date-picker>
+	            <el-date-picker v-model="queryEndDate" type="datetime" placeholder="选择结束时间"></el-date-picker>
 	        </el-col>
             <!-- 查询 -->
             <el-col :span="4" class="pct25">
             	<label class="mr20"></label>
-                <el-button type="success" class="pct70 l">查询</el-button>
+                <el-button type="success" class="pct70 l" @click="query_program()">查询</el-button>
             </el-col>
         </el-row>
 
         <div class="main-container">
             <!--表格部分-->
-                <el-table
-			    	:data="tableData"
-				    stripe
-				    row-key="id"
-				    style="width:100%"
-				    >
-				    <el-table-column
-				      prop="schoolName"
-				      label="学校"
-				      align="center" show-overflow-tooltip
-				      >
-				    </el-table-column>
-				    <el-table-column
-				      prop="gradeName"
-				      label="年级"
-				      align="center"
-				      >
-				    </el-table-column>
-				    <el-table-column
-				      prop="sourceName"
-				      label="录制源"
-				      align="center"
-				      show-overflow-tooltip
-				      >
-				    </el-table-column>
-				    <el-table-column
-				      prop=""
-				      label="播放机构"
-				      align="center"
-				      show-overflow-tooltip min-width="100px;"
-				      >
-				    </el-table-column>
-				    <el-table-column
-				      prop="subject"
-				      label="学科"
-				      align="center"
-				      >
-				    </el-table-column>
-				    <el-table-column
-				      prop="teacherName"
-				      label="教师"
-				      align="center">
-				    </el-table-column>
-				    <el-table-column
-				      prop="name"
-				      label="节目名"
-				      align="center" show-overflow-tooltip>
-				    </el-table-column>
-				    <el-table-column
-				      prop="startDate"
-				      label="开始时间"
-				      align="center"  min-width="160px">
-				    </el-table-column>
-				    <el-table-column
-				      prop="endDate"
-				      label="结束时间"
-				      align="center" min-width="160px">
-				    </el-table-column>
-				    <el-table-column
-				      prop="status"
-				      label="状态"
-				      align="center">
-				    </el-table-column>
-				    <el-table-column label="操作" align="center" min-width="150px">
-				    	<template scope="scope">
-				    			<i title="查看详细" class="el-icon-information" @click="dialogInfos(scope.row.id)"></i>
-				    			<i title="编辑" class="el-icon-edit" @click="dialogEdits(scope.row.id)"></i>
-				    			<i title="删除" class="el-icon-delete"></i>
-				    	</template>
-				    </el-table-column>
-			  	</el-table>
-		  		<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageNum"
-			      :page-sizes="[10, 20, 50]"
-			      :page-size="pageSize"
-			      layout="sizes, prev, pager, next, jumper"
-			      :total="totals" class="tc mt20"
-			      >
-			    </el-pagination>
-			  	
+            <el-table :data="tableData" stripe row-key="id" style="width:100%">
+			    <el-table-column prop="schoolName" label="学校" align="center" show-overflow-tooltip></el-table-column>
+			    <el-table-column prop="gradeName" label="年级" width="120px" align="center" show-overflow-tooltip></el-table-column>
+			    <el-table-column prop="sourceName" label="录制源" align="center" show-overflow-tooltip></el-table-column>
+			    <el-table-column prop="subjectName" label="学科" width="100px" align="center" show-overflow-tooltip></el-table-column>
+			    <el-table-column prop="teacherName" label="教师" width="100px" align="center" show-overflow-tooltip></el-table-column>
+			    <el-table-column prop="name" label="节目名" align="center" show-overflow-tooltip></el-table-column>
+			    <el-table-column prop="startDate" :formatter="timeFormat" width="190px" label="开始时间" align="center" show-overflow-tooltip></el-table-column>
+			    <el-table-column prop="endDate" :formatter="timeFormat" width="190px" label="结束时间" align="center" show-overflow-tooltip></el-table-column>
+			    <el-table-column prop="status" label="状态" width="100px" align="center" show-overflow-tooltip></el-table-column>
+			    <el-table-column label="操作" align="center" width="200px">
+			    	<template scope="scope">
+			    			<i title="查看详细" class="el-icon-information" @click="dialogInfos(scope.row.id)"></i>
+			    			<i title="预览视频" class="el-icon-search" @click="dialogShows(scope.row.id)"></i>
+			    			<i title="编辑" class="el-icon-edit" @click="dialogEdits(scope.row.id)"></i>
+			    			<i title="删除" class="el-icon-delete"></i>
+			    	</template>
+			    </el-table-column>
+		  	</el-table>
+	  		<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageNum"
+		      :page-sizes="[10, 20, 50]"
+		      :page-size="pageSize"
+		      layout="sizes, prev, pager, next, jumper"
+		      :total="totals" class="tc mt20"
+		      >
+		    </el-pagination>
         </div>
         
         <el-dialog :visible.sync="dialogInfo" :show-close="true">
@@ -203,7 +131,7 @@
         			</div>
         			<div class="infoItems fix l">
         				<div class="l part tr">学科:</div>
-        				<div class="l part tl">{{program.subject}}</div>
+        				<div class="l part tl">{{program.subjectName}}</div>
         			</div>
         		</div>
         		<div class="secondTitle">录制信息</div>
@@ -249,6 +177,9 @@
         	</div>
     	</el-dialog>
     	
+    	<el-dialog :visible.sync="dialogShow" :before-close="show_close" id="playVideo" :show-close="fasle">
+    	</el-dialog>
+    	
     	<el-dialog :visible.sync="dialogEdit" :show-close="false">
     		<el-tabs v-model="activeName">
 			    <el-tab-pane label="节目详情" name="first">
@@ -257,7 +188,7 @@
 				    		
 				    		<div class="secondTitle">节目信息</div>
 						    <el-form-item label="节目名">
-						      <el-input v-model="program.name" name="name"></el-input>
+						      <el-input v-model="program.name" style="width:220px" name="name"></el-input>
 						    </el-form-item>
 						    <el-form-item label="是否属于课程" style="width: 45%;padding-left: 4%;">
 						    	<el-radio-group  style="margin-left:30px;" v-model="program.isCourse">
@@ -267,37 +198,31 @@
 						    </el-form-item>
 						    
 						    <el-form-item label="学校" v-if="program.isCourse == 1">
-						        <el-select v-model="program.schoolId">
-							      <el-option label="区域一" value="22"></el-option>
-							      <el-option label="区域二" value="23"></el-option>
-							    </el-select>
+							    <el-select id="schoolName_in" v-model="program.schoolId" placeholder="请选择学校" @change="school_chage()">
+								    <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
+								</el-select>
 						    </el-form-item>
 						    <el-form-item label="年级" v-if="program.isCourse == 1">
-						        <el-select v-model="program.gradeId">
-							      <el-option label="区域一" value="3"></el-option>
-							      <el-option label="区域二" value="4"></el-option>
-							    </el-select>
+							    <el-select id="gradeName_in" v-model="program.gradeId" placeholder="请选择年级">
+								    <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
+								</el-select>
 						    </el-form-item>
 						    <el-form-item label="教师" v-if="program.isCourse == 1">
-						        <el-select v-model="program.teacherId">
-							      <el-option label="区域一" value="12"></el-option>
-							      <el-option label="区域二" value="123"></el-option>
-							    </el-select>
+						        <el-select id="teacherName_in" v-model="program.teacherId" placeholder="请选择教师">
+								    <el-option v-for="item in optionTeacher" :key="item.id" :label="item.name" :value="item.id"></el-option>
+								</el-select>
 						    </el-form-item>
 						    <el-form-item label="学科" v-if="program.isCourse == 1">
-						        <el-select v-model="program.subject">
-							      <el-option label="区域一" value="shanghai"></el-option>
-							      <el-option label="区域二" value="beijing"></el-option>
-							    </el-select>
+							    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
+								    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
+								</el-select>
 						    </el-form-item>
-						    <el-form-item label="大纲" v-if="program.isCourse == 1">
-						        <el-cascader :options="optionss" v-model="selectedOptions" style="width: 400px;">
-							    </el-cascader>
+						    <el-form-item label="课程大纲" v-if="program.isCourse == 1">
 						    </el-form-item>
 						    
 						    <div class="secondTitle">录制信息</div>
 						    <el-form-item label="录制源">
-						      <el-input v-model="program.sourceName" readonly></el-input>
+						      <el-input style="width:220px" v-model="program.sourceName" readonly></el-input>
 						    </el-form-item>
 						    <el-form-item label="">
 						      <el-input type="hidden" readonly></el-input>
@@ -312,6 +237,9 @@
 						    </el-form-item>
 						    
 						    <div class="secondTitle">播放信息</div>
+						    <el-tree ref="playTree" default-expand-all :data="organizadata" :props="defaultProps" node-key="id" show-checkbox :indent="indents">
+							</el-tree>
+						    
 						</el-form>
 					</div>
 					<div class="editBottom fix">
@@ -329,46 +257,20 @@
 			    		<el-form :inline="true" :model="program" class="demo-form-inline">
 			    			<div class="secondTitle">视频参数</div>
 			    			<el-form-item label="编码类型">
-						        <el-select v-model="program.encoding" disabled>
-							      <el-option label="H.264" value="0"></el-option>
-							      <el-option label="H.265" value="1"></el-option>
-							    </el-select>
+							    <el-input v-model="program.encoding" readonly></el-input>
 						    </el-form-item>
 						    <el-form-item label="分辨率">
-						        <el-select v-model="program.resolution" disabled>
-							      <el-option label="1280*720P" value="0"></el-option>
-							      <el-option label="1280*960" value="1"></el-option>
-							      <el-option label="1920*1080P" value="2"></el-option>
-							      <el-option label="2048*1536" value="3"></el-option>
-							    </el-select>
+							    <el-input v-model="program.resolution" readonly></el-input>
 						    </el-form-item>
 						    <el-form-item label="码率">
-						        <el-select v-model="program.codeRate" disabled>
-							      <el-option label="256" value="256"></el-option>
-							      <el-option label="512" value="512"></el-option>
-							      <el-option label="1024" value="1024"></el-option>
-							      <el-option label="2048" value="2048"></el-option>
-							      <el-option label="3072" value="3072"></el-option>
-							      <el-option label="4096" value="4096"></el-option>
-							      <el-option label="6144" value="6144"></el-option>
-							      <el-option label="8192" value="8192"></el-option>
-							      <el-option label="12288" value="12288"></el-option>
-							      <el-option label="16384" value="16384"></el-option>
-							    </el-select>
+						    	<el-input v-model="program.codeRate" readonly></el-input>
 						    </el-form-item>
 						    <el-form-item label="码流控制">
-						        <el-select v-model="program.rateControl" disabled>
-							      <el-option label="区域一" value="22"></el-option>
-							      <el-option label="区域二" value="23"></el-option>
-							    </el-select>
+						    	<el-input v-model="program.rateControl" readonly></el-input>
 						    </el-form-item>
 						    <el-form-item label="帧率">
-						        <el-select v-model="program.frameRate" disabled>
-							      <el-option label="50" value="50"></el-option>
-							      <el-option label="1/16" value="1/16"></el-option>
-							    </el-select>
+						    	<el-input v-model="program.frameRate" readonly></el-input>
 						    </el-form-item>
-						    
 			    		</el-form>
 			    	</div>
 			    	<div class="editBottom fix">
@@ -388,65 +290,118 @@
 </template>
 
 <script>
-  var moment = require("moment");
   export default{
     data () {
       return {
-        options: [{
-          
-        }],
-        value: '',
-        startTime:'',
-        endTime:'',
+        queryStartDate:'',
+        queryEndDate:'',
+     	optionSchool:null,
+        optionGrand:null,
+        optionSchool_val:'',
+        optionGrand_val:'',
+        optionTeacher:null,
+        optionSubject:null,
+        optionTeacher_val:'',
+        optionSubject_val:'',
+        name_q:'',
+        
         tableData:[],
         dialogInfo:false,
         dialogEdit:false,
+        dialogShow:false,
         activeName:'first',
-        selectedOptions:[],
     	pageNum:1,
-		pageSize:1,
+		pageSize:10,
 		totals:5,
-        optionss: [{
-          
+		types:'',
+        program:{},
+        
+        indents:20,
+        organizadata: [{
         }],
-        program:[{
-        	
-        }]
+        expand:false,
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        },
+        
+        videoSrc:'http://he.yinyuetai.com/uploads/videos/common/C033015644E6D35D99022E014A4761A1.flv?sc\u003d6cbd6cfc31def573\u0026br\u003d3138\u0026vid\u003d2650626\u0026aid\u003d167\u0026area\u003dHT\u0026vst\u003d2',
         
       }
     },
-    mounted:function(){
-    	var dataS = {pageNum:1,pageSize:10};
-		//programInit(this,dataS);
-		this.postHttp(this,dataS,'program/findPrograms',programInit);
-	},
 	methods: {
       dialogInfos(id){
-    	getHttp(this,id,'dialogInfo');
+      	this.dialogInfo = true;
+      	var data = {id:id};
+      	this.postHttp(this,data,"program/getProgram",this.info_handle);
 	  },
 	  dialogEdits(id){
-		getHttp(this,id,'dialogEdit');
+    	this.dialogEdit = true;
+    	var data = {id:id};
+      	this.postHttp(this,data,"program/getProgram",this.info_handle);
+      	var data = {}
+    	this.postHttp(this,data,"organization/queryOrganizations",this.init_organiza);
+    	
+	  },
+	  init_organiza(obj,data){
+      	this.organizadata = data.result.orgList;
+      },
+	  user_handle(obj,data){
+	  	this.optionTeacher = data.result.list;
+	  },
+	  object_handle(obj,data){
+	  	this.optionSubject = data.result;
+	  },
+	  info_handle(obj,data){
+	  	if(this.dialogInfo){
+	  		var lists = data.result;
+			var startDates = this.timeF(lists.startDate).format("YYYY-MM-DD HH:mm:ss");
+			var endDates = this.timeF(lists.endDate).format("YYYY-MM-DD HH:mm:ss");
+			lists.startDate = startDates;
+			lists.endDate = endDates;
+			this.program = lists;
+			
+	  	}else{
+	  		var par = data.result.schoolId;
+			this.get_options(this,par,"optionGrand");
+			this.program = data.result;
+			var s = data.result.programShowIds;
+			this.$refs.playTree.setCheckedKeys(s);
+	  	}
+	  	
 	  },
 	  changeCourse(){
 		var iscourse = this.program.isCourse
 	  },
 	  saveprogarm(){
+		
+		delete this.program['createDate']
+		delete this.program['updateDate']
+		delete this.program['programShowList']
+		this.program.startDate = this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")
+		this.program.endDate = this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")
 		var data = this.program;
-		data.programShowList = arrayToJson(data.programShowList);
-		this.$http.post('http://localhost:8888/balanced-education/program/saveProgram',data,{emulateJSON: true,credientials:false}).then(response => {
-	    	console.log(response);
-		},response => {
-			console.log(response);
-		})
+		data.programShowIds = this.$refs.playTree.getCheckedKeys();
+		this.postHttp(this,data,"program/saveProgram",this.save_handle);
+	  },
+	  save_handle(obj,data){
+	  	if(code=="10000"){
+		  		this.notify_jr(this,'编辑节目单','操作成功','success');
+		  		var dataS = {pageNum:1,pageSize:10};
+		  		this.postHttp(this,dataS,'program/findPrograms',this.programInit);
+		  		this.dialogEdit = false;
+		  	}else{
+		  		this.notify_jr(this,'编辑节目单',data.message,'error');
+		  	}
 	  },
 	  handleSizeChange(val) {
 	  	var dataS = {pageNum:1,pageSize:val};
-	  	programInit(this,dataS);
+	  	this.postHttp(this,dataS,'program/findPrograms',this.programInit);
 	  },
 	  handleCurrentChange(val) {
 	  	var pageS = this.pageSize;
 	  	var dataS = {pageNum:val,pageSize:pageS};
-	    programInit(this,dataS);
+	    this.postHttp(this,dataS,'program/findPrograms',this.programInit);
 	  },
 	  choiseType(type,event){
 	  	var obje = event.currentTarget;
@@ -458,60 +413,102 @@
 	  	}
 	  	obje.className += ' active';
   		var dataS = {pageNum:1,pageSize:10,type:type};
-	  	programInit(this,dataS);
-  	  }
-    }
+  		this.types = type;
+	  	this.postHttp(this,dataS,'program/findPrograms',this.programInit);
+  	  },
+  	  programInit(obj,data){
+	    this.tableData = data.result.list;
+	    this.pageNum = data.result.pageNum;
+	    this.pageSize = data.result.pageSize;
+	    this.totals = data.result.total;
+	  },
+	  timeFormat(row,column){
+	  	var date = row[column.property];  
+	  	if (date == undefined) {  
+	     return "";  
+	  	}  
+	  	return this.timeF(date).format("YYYY-MM-DD HH:mm:ss");  
+	  },
+	  school_chage_q(){
+		var id = this.optionSchool_val;
+		if(id!=""){
+			this.get_options(this,id,"optionGrand");
+		}
+	  },
+	  school_chage(){
+	  	console.log(this.program)
+	  	var id = this.program.schoolId;
+		if(id!=""){
+			this.get_options(this,id,"optionGrand");
+		}
+	  },
+	  query_program(){
+	  	this.pageNum = 1;
+	  	this.pageSize = 10;
+	  	this.types = '';
+	  	var dataS = ajax_data(this);
+		this.postHttp(this,dataS,'program/findPrograms',this.programInit);
+	  },
+	  dialogShows(id){
+	  	var src = this.videoSrc;
+	  	var html = '<div class="el-dialog el-dialog--small" style="top: 15%;"><div class="el-dialog__header"><span class="el-dialog__title"></span></div><div class="el-dialog__body">'
+	  	html += '<div class="infoTitle">视频预览</div><div class="infoBody"><video width="100%" height="500" controls autoplay> <source src="'+src+'" type="video/mp4">您的浏览器不支持 video 标签。</video></div>'
+	  	html +='</div></div>'
+	  	var videos = document.getElementById("playVideo");
+	  	videos.innerHTML = html;
+	  	this.dialogShow = true;
+	  },
+	  show_close(done){
+	  	var videos = document.getElementById("playVideo");
+	  	videos.innerHTML = "";
+	  	this.dialogShow = false;
+	  }
+    },
+	mounted:function(){
+    	var dataS = ajax_data(this);
+		this.postHttp(this,dataS,'program/findPrograms',this.programInit);
+		this.get_options(this,"","optionSchool");
+		var data_user = {role:'教师',pageNum:1,pageSize:30};
+      	this.postHttp(this,data_user,"user/queryUsers",this.user_handle);
+      	var data_code ={code:'SUBJECT'};
+      	this.postHttp(this,data_code,"dictionary/getDictionarysBySupCode",this.object_handle);
+	}
   }
   
-  
-  function getHttp(obj,id,evenst){
-  	obj.$http.get('http://localhost:8888/balanced-education/program/getProgram?id='+id,{},{emulateJSON: true,credientials:false}).then(response => {
-		var lists = response.data.result;
-		var startDates = moment(lists.startDate).format("YYYY-MM-DD HH:mm:ss");
-		var endDates = moment(lists.endDate).format("YYYY-MM-DD HH:mm:ss");
-		lists.startDate = startDates;
-		lists.endDate = endDates;
-        obj.program = lists;
-        if(evenst == "dialogInfo"){
-        	obj.dialogInfo = true;
-        }
-        if(evenst == "dialogEdit"){
-        	obj.dialogEdit = true;
-        }
-    },response => {
-		console.log(response);
-	})
+  function listToArray(list) {
+  	var arr = new Array();
+  	for(var i = 0;i<list.length;i++){
+  		arr[i] = list[i].id;
+  	}
+  	return arr;
   }
   
-  function programInit(obj,dataS){
-    obj.tableData = lists;
-//  obj.pageNum = response.data.result.pageNum;
-//  obj.pageSize = response.data.result.pageSize;
-//  obj.totals = response.data.result.total;
-	console.log(dataS)
-  }
-  
-  
-  function arrayToJson(o) {
-    var r = [];
-    if (typeof o == "string") return "\"" + o.replace(/([\'\"\\])/g, "\\$1").replace(/(\n)/g, "\\n").replace(/(\r)/g, "\\r").replace(/(\t)/g, "\\t") + "\"";
-    if (typeof o == "object") {
-      if (!o.sort) {
-        for (var i in o)
-          r.push(i + ":" + arrayToJson(o[i]));
-        if (!!document.all && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)) {
-          r.push("toString:" + o.toString.toString());
-        }
-        r = "{" + r.join() + "}";
-      } else {
-        for (var i = 0; i < o.length; i++) {
-          r.push(arrayToJson(o[i]));
-        }
-        r = "[" + r.join() + "]";
-      }
-      return r;
-    }
-    return o.toString();
+  function ajax_data(obj){
+	var schoolId = obj.optionSchool_val;
+	var gradeId = obj.optionGrand_val;
+	var teacherId = obj.optionTeacher_val;
+	var subject = obj.optionSubject_val;
+	var name = obj.name_q;
+	//var queryStartDate = new Date(obj.queryStartDate).getTime();
+	var queryStartDate = obj.timeF(obj.queryStartDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':obj.timeF(obj.queryStartDate).format("YYYY-MM-DD HH:mm:ss")
+	var queryEndDate = obj.timeF(obj.queryEndDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':obj.timeF(obj.queryEndDate).format("YYYY-MM-DD HH:mm:ss")
+	var type = obj.types;
+	var pageNum = obj.pageNum;
+	var pageSize = obj.pageSize;
+	
+	var data = {
+		schoolId:schoolId,
+		gradeId:gradeId,
+		teacherId:teacherId,
+		subject:subject,
+		name:name,
+		type:type,
+		queryStartDate:queryStartDate,
+		queryEndDate:queryEndDate,
+		pageNum:pageNum,
+		pageSize:pageSize
+	}
+	return data;
   }
   
 </script>
@@ -538,6 +535,7 @@
     #program .el-cascader .el-input__inner{width: 400px;}
     
     #program .editBody .el-date-editor.el-input{width:220px;}
+    #program .editBody .el-select .el-input__inner{width:220px;}
     
     #program .el-tabs__nav-wrap{border-top-left-radius: 4px;border-top-right-radius: 4px;}
 </style>
