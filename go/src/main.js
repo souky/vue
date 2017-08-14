@@ -37,7 +37,7 @@ new Vue({
 });
 var querystring = require('querystring');
 
-const baseUrl = "http://localhost:8888/balanced-education/";
+const baseUrl = "http://192.168.128.213:8888/balanced-education/";
 
 Vue.prototype.postHttp = function(obj,data,address,fn){
 	obj.$axios.post(baseUrl+address,querystring.stringify(data),{withCredentials : true}).then(response => {
