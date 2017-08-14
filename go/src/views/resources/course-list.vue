@@ -269,15 +269,7 @@
         pageNum:1,
         pageSize:10,
         total:20,
-        tableData:[{
-        	id:2001,
-        	schoolName:'测试学校名',
-        	gradeName:'测试年级',
-        	subject:'测试学科',
-        	teacherName:'测试教师名',
-        	courseName:'测试课程名',
-        	startDate:'2017-07-31 10:18:23',
-        }],
+        tableData:[],
         imageUrl:'',
         labelPosition: 'right',
         infoTitles:''
@@ -298,6 +290,12 @@
         }
 		  	this.dialogAdd = true;
 		  	this.infoTitles = "编辑";
+		  },
+		  initTabelDate(obj,data){
+		  	this.tableData = data.result.list;
+		    this.pageNum = data.result.pageNum;
+		    this.pageSize = data.result.pageSize;
+		    this.totals = data.result.total;
 		  },
     	handleSizeChange(val) {
 		  	var dataS = {pageNum:1,pageSize:val};
@@ -328,6 +326,9 @@
       	this.dialogAdd = true;
       	this.infoTitles = "新增";
       }
+    },
+    mounted:function(){
+    	this.postHttp(this,data,"",this.initTabelDate);
     }
 
   }

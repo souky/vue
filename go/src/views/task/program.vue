@@ -88,7 +88,7 @@
 		    </el-pagination>
         </div>
         
-        <el-dialog :visible.sync="dialogInfo" :show-close="true">
+        <el-dialog :visible.sync="dialogInfo" :show-close="true" style="top:-14%">
         	<div class="infoTitle">详情</div>
         	<div class="infoBody" v-model="program">
         		<div class="secondTitle">节目信息</div>
@@ -142,14 +142,8 @@
         			</div>
         		</div>
         		<div class="secondTitle" >播放信息</div>
-        		<div v-if="program.programShowList == undefined" class="noList">暂无数据</div>
-        		<div class="fix" v-for="(ee,index) in program.programShowList">
-        			<div class="infoItems fix l" >
-        				<div class="l part tr" v-if="index == 0">播放机构:</div>
-        				<div class="l part tr" v-else></div>
-        				<div class="l part tl" >{{ee.id}}</div>
-        			</div>
-        		</div>
+				<el-tree ref="playTreeInfo" default-expand-all :data="organizadata" :props="defaultProps_info" show-checkbox node-key="id" :indent="indents">
+				</el-tree>
         		<div class="secondTitle">视频参数</div>
         		<div class="fix">
         			<div class="infoItems fix l">
@@ -180,7 +174,7 @@
     	<el-dialog :visible.sync="dialogShow" :before-close="show_close" id="playVideo" :show-close="fasle">
     	</el-dialog>
     	
-    	<el-dialog :visible.sync="dialogEdit" :show-close="false">
+    	<el-dialog :visible.sync="dialogEdit" :show-close="false" style="top:-14%">
     		<el-tabs v-model="activeName">
 			    <el-tab-pane label="节目详情" name="first">
 			    	<div class="editBody">
@@ -190,54 +184,91 @@
 						    <el-form-item label="节目名">
 						      <el-input v-model="program.name" style="width:220px" name="name"></el-input>
 						    </el-form-item>
-						    <el-form-item label="是否属于课程" style="width: 45%;padding-left: 4%;">
+						    <el-form-item label="是否属于课程" style="width: 45%;padding-left: 4%;" v-if="program.type=='LIVE' || program.type=='RECORD'">
 						    	<el-radio-group  style="margin-left:30px;" v-model="program.isCourse">
 							      <el-radio :label="1" name="isCourse">是</el-radio>
 							      <el-radio :label="0" name="isCourse">否</el-radio>
 							    </el-radio-group>
 						    </el-form-item>
-						    
-						    <el-form-item label="学校" v-if="program.isCourse == 1">
-							    <el-select id="schoolName_in" v-model="program.schoolId" placeholder="请选择学校" @change="school_chage()">
-								    <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
-								</el-select>
-						    </el-form-item>
-						    <el-form-item label="年级" v-if="program.isCourse == 1">
-							    <el-select id="gradeName_in" v-model="program.gradeId" placeholder="请选择年级">
-								    <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
-								</el-select>
-						    </el-form-item>
-						    <el-form-item label="教师" v-if="program.isCourse == 1">
+						    <div class="secondTitle" v-if="program.isCourse == 1 && program.type!='VOD'">课程信息</div>
+						    <el-form-item label="教师" v-if="program.isCourse == 1 && program.type!='VOD'">
 						        <el-select id="teacherName_in" v-model="program.teacherId" placeholder="请选择教师">
 								    <el-option v-for="item in optionTeacher" :key="item.id" :label="item.name" :value="item.id"></el-option>
 								</el-select>
 						    </el-form-item>
-						    <el-form-item label="学科" v-if="program.isCourse == 1">
+						    <el-form-item label="学科" v-if="program.isCourse == 1 && program.type!='VOD'">
 							    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
 								    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
 								</el-select>
 						    </el-form-item>
-						    <el-form-item label="课程大纲" v-if="program.isCourse == 1">
+						    <el-form-item label="课程大纲" v-if="program.isCourse == 1 && program.type!='VOD'">
 						    </el-form-item>
 						    
-						    <div class="secondTitle">录制信息</div>
-						    <el-form-item label="录制源">
-						      <el-input style="width:220px" v-model="program.sourceName" readonly></el-input>
+						    <div class="secondTitle" v-if="program.type=='LIVE' || program.type=='RECORD'">录制信息</div>
+						    <el-form-item label="学校" v-if="program.type=='LIVE' || program.type=='RECORD'">
+							    <el-select id="schoolName_in" v-model="program.schoolId" placeholder="请选择学校" @change="school_chage()">
+								    <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
+								</el-select>
 						    </el-form-item>
-						    <el-form-item label="">
-						      <el-input type="hidden" readonly></el-input>
+						    <el-form-item label="年级" v-if="program.type=='LIVE' || program.type=='RECORD'">
+							    <el-select id="gradeName_in" v-model="program.gradeId" placeholder="请选择年级" @change="grand_chage()">
+								    <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
+								</el-select>
 						    </el-form-item>
-						    <el-form-item label="开始时间">
+						    <el-form-item label="班级" v-if="program.type=='LIVE' || program.type=='RECORD'">
+							    <el-select id="className_in"  v-model="program.sourceId" placeholder="请选择年级" >
+								    <el-option v-for="item in optionClass" :key="item.id" :label="item.name" :value="item.id"></el-option>
+								</el-select>
+						    </el-form-item>
+						    <el-form-item label="录制源" v-if="program.type=='LIVE' || program.type=='RECORD'">
+						      <el-input style="width:220px" id="sourceName_in" v-model="program.sourceName" readonly></el-input>
+						    </el-form-item>
+						    <el-form-item label="开始时间" v-if="program.type=='LIVE' || program.type=='RECORD'">
 							    <el-date-picker v-model="program.startDate" type="datetime">
 							    </el-date-picker>
 						    </el-form-item>
-						    <el-form-item label="结束时间">
+						    <el-form-item label="结束时间" v-if="program.type=='LIVE' || program.type=='RECORD'">
 							    <el-date-picker v-model="program.endDate" type="datetime">
 							    </el-date-picker>
 						    </el-form-item>
 						    
-						    <div class="secondTitle">播放信息</div>
-						    <el-tree ref="playTree" default-expand-all :data="organizadata" :props="defaultProps" node-key="id" show-checkbox :indent="indents">
+						    <div class="secondTitle" v-if="program.type=='VOD'">视频信息</div>
+						    <el-form-item label="学校" v-if="program.type=='VOD'">
+							    <el-select id="schoolName_in" v-model="program.schoolId" placeholder="请选择学校" @change="school_chage()">
+								    <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
+								</el-select>
+						    </el-form-item>
+						    <el-form-item label="年级" v-if="program.type=='VOD'">
+							    <el-select id="gradeName_in" v-model="program.gradeId" placeholder="请选择年级" @change="grand_chage()">
+								    <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
+								</el-select>
+						    </el-form-item>
+						    <el-form-item label="班级" v-if="program.type=='VOD'">
+							    <el-select id="className_in"  v-model="program.sourceId" placeholder="请选择年级" >
+								    <el-option v-for="item in optionClass" :key="item.id" :label="item.name" :value="item.id"></el-option>
+								</el-select>
+						    </el-form-item>
+						    <el-form-item label="学科" v-if="program.type=='VOD'">
+							    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
+								    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
+								</el-select>
+						    </el-form-item>
+						    <el-form-item label="视频" v-if="program.type=='VOD'">
+							    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
+								    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
+								</el-select>
+						    </el-form-item>
+						    
+						    <div class="secondTitle" v-if="program.type=='LIVE' || program.type=='VOD'">播放信息</div>
+						    <el-form-item label="开始时间" v-if="program.type=='VOD'">
+							    <el-date-picker v-model="program.startDate" type="datetime">
+							    </el-date-picker>
+						    </el-form-item>
+						    <el-form-item label="结束时间" v-if="program.type=='VOD'">
+							    <el-date-picker v-model="program.endDate" type="datetime">
+							    </el-date-picker>
+						    </el-form-item>
+						    <el-tree ref="playTree" v-if="program.type=='LIVE' || program.type=='VOD'" default-expand-all :data="organizadata" :props="defaultProps" node-key="id" show-checkbox :indent="indents">
 							</el-tree>
 						    
 						</el-form>
@@ -297,6 +328,7 @@
         queryEndDate:'',
      	optionSchool:null,
         optionGrand:null,
+        optionClass:null,
         optionSchool_val:'',
         optionGrand_val:'',
         optionTeacher:null,
@@ -309,6 +341,9 @@
         dialogInfo:false,
         dialogEdit:false,
         dialogShow:false,
+        flagF_s:true,
+        flagF_g:true,
+        flagF_c:true,
         activeName:'first',
     	pageNum:1,
 		pageSize:10,
@@ -324,6 +359,12 @@
           children: 'children',
           label: 'label'
         },
+        defaultProps_info: {
+          children: 'children',
+          label: 'label',
+          disable:true
+        },
+        fasle:false,
         
         videoSrc:'http://he.yinyuetai.com/uploads/videos/common/C033015644E6D35D99022E014A4761A1.flv?sc\u003d6cbd6cfc31def573\u0026br\u003d3138\u0026vid\u003d2650626\u0026aid\u003d167\u0026area\u003dHT\u0026vst\u003d2',
         
@@ -334,14 +375,12 @@
       	this.dialogInfo = true;
       	var data = {id:id};
       	this.postHttp(this,data,"program/getProgram",this.info_handle);
+      	this.postHttp(this,data,"organization/queryOrganizations",this.init_organiza);
 	  },
 	  dialogEdits(id){
     	this.dialogEdit = true;
     	var data = {id:id};
       	this.postHttp(this,data,"program/getProgram",this.info_handle);
-      	var data = {}
-    	this.postHttp(this,data,"organization/queryOrganizations",this.init_organiza);
-    	
 	  },
 	  init_organiza(obj,data){
       	this.organizadata = data.result.orgList;
@@ -360,13 +399,20 @@
 			lists.startDate = startDates;
 			lists.endDate = endDates;
 			this.program = lists;
-			
+			var s = data.result.programShowIds;
+			this.$refs.playTreeInfo.setCheckedKeys(s);
 	  	}else{
+	  		this.flagF_s = true;
+	  		this.flagF_g = true;
+	  		this.flagF_c = true;
 	  		var par = data.result.schoolId;
 			this.get_options(this,par,"optionGrand");
+			var pars = data.result.gradeId;
+			this.get_options(this,pars,"optionClass");
 			this.program = data.result;
 			var s = data.result.programShowIds;
 			this.$refs.playTree.setCheckedKeys(s);
+			document.getElementById("sourceName_in").getElementsByTagName("input")[0].onfocus = this.onFocus_name;
 	  	}
 	  	
 	  },
@@ -380,12 +426,13 @@
 		delete this.program['programShowList']
 		this.program.startDate = this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")
 		this.program.endDate = this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")
+		this.onFocus_name();
 		var data = this.program;
 		data.programShowIds = this.$refs.playTree.getCheckedKeys();
 		this.postHttp(this,data,"program/saveProgram",this.save_handle);
 	  },
 	  save_handle(obj,data){
-	  	if(code=="10000"){
+	  	if(data.code=="10000"){
 		  		this.notify_jr(this,'编辑节目单','操作成功','success');
 		  		var dataS = {pageNum:1,pageSize:10};
 		  		this.postHttp(this,dataS,'program/findPrograms',this.programInit);
@@ -431,16 +478,41 @@
 	  },
 	  school_chage_q(){
 		var id = this.optionSchool_val;
+		this.optionGrand = '';
+		this.optionGrand_val = null;
 		if(id!=""){
 			this.get_options(this,id,"optionGrand");
 		}
 	  },
 	  school_chage(){
-	  	console.log(this.program)
 	  	var id = this.program.schoolId;
+	  	if(!this.flagF_s){
+			this.optionGrand = '';
+	  		this.program.gradeId = '';
+		}else{
+			this.flagF_s = false;
+		}
 		if(id!=""){
 			this.get_options(this,id,"optionGrand");
 		}
+	  },
+	  grand_chage(){
+	  	var id = this.program.gradeId;
+	  	if(!this.flagF_g){
+			this.optionClass = '';
+	  		this.program.sourceId = '';
+		}else{
+			this.flagF_g = false;
+		}
+		if(id!=""){
+			this.get_options(this,id,"optionClass");
+		}
+	  },
+	  onFocus_name(){
+	  	var s1 = document.getElementById("schoolName_in").getElementsByTagName("input")[0].value;
+	  	var s2 = document.getElementById("gradeName_in").getElementsByTagName("input")[0].value;
+	  	var s3 = document.getElementById("className_in").getElementsByTagName("input")[0].value;
+	  	this.program.sourceName = s1+s2+s3;
 	  },
 	  query_program(){
 	  	this.pageNum = 1;
@@ -472,6 +544,11 @@
       	this.postHttp(this,data_user,"user/queryUsers",this.user_handle);
       	var data_code ={code:'SUBJECT'};
       	this.postHttp(this,data_code,"dictionary/getDictionarysBySupCode",this.object_handle);
+      	
+      	var data = {}
+    	this.postHttp(this,data,"organization/queryOrganizations",this.init_organiza);
+    	
+    	
 	}
   }
   

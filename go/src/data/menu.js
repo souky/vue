@@ -26,12 +26,5 @@ export default [
         {name: '学校架构', link: 'school-framework'},
         {name: '我的帐户', link: 'my-account'}
       ]
-    },
-    {
-      name: '设备管理', icon:'el-icon-menu',
-      subMenu: [
-        {name: '摄相机配置', link: 'photos'},
-        {name: '服务器配置', link: 'service'}
-      ]
-    },
+    }
 ]
