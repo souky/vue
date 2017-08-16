@@ -2,7 +2,7 @@
   <div id="courseVideo" class="course-video-container">
   	
   	<ul class="tab-bor">
-	    <li name="programPoi" class="poi active" @click="choiseType('video',$event)">课堂视频</li>
+	    <li name="programPoi" class="poi active" @click="choiseType('video',$event)" >课堂视频</li>
 	    <li name="programPoi" class="poi" @click="choiseType('supplementary',$event)">教辅文件</li>
 	</ul>
     <el-row type="flex" class="row-bg pt20 pl20" justify="start">
@@ -67,7 +67,7 @@
         </el-col>
         <el-col :span="4" class="pct25">
         		<label class="mr20"></label>
-            <el-button type="primary" class="pct70 l" @click="upload()">上传课堂视频</el-button>
+            <el-button type="primary" class="pct70 l" @click="upload()">上传教辅文件</el-button>
         </el-col>
     </el-row>
 
@@ -93,39 +93,50 @@
     </div>
     
     <el-dialog :visible.sync="dialogUpload" :show-close="false" >
-  		<div class="infoTitle">上传课堂视频</div>
+  		<div class="infoTitle">上传教辅文件</div>
   		<div class="editBody fix">
   			<el-form :inline="true" :model="course" class="demo-form-inline">
-    			<div class="secondTitle">视频信息</div>
-    			<el-form-item label="节目名">
-			      <el-input v-model="course.name" icon="search"></el-input>
-			    </el-form-item>
+    			<div class="secondTitle">文件信息</div>
+    			<el-form-item label="文件名">
+    				
+            <el-upload class="upload-demo" drag :action="urls"  ref="upload"  :auto-upload="true" :with-credentials="true" :before-upload="beforeupload" :on-success="upload_success">
+            	<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+							
+            </el-upload>
+			      <!--<el-input v-model="course.name" icon="search"></el-input>-->
+			    </el-form-item><br />
 			    <el-form-item label="是否公开" style="width: 45%;padding-left: 4%;">
 			    	<el-radio-group  style="margin-left:30px;" v-model="course.ispublic">
 				      <el-radio :label="1" name="isCourse">是</el-radio>
 				      <el-radio :label="0" name="isCourse">否</el-radio>
 				    </el-radio-group>
-			    </el-form-item>
+			    </el-form-item><br  />
+			  
 			    <el-form-item label="资源类型" v-if="supplementary">
 			        <el-select :model="course.source"  :key="course.source" :value="course.source">
 					      <el-option label="DOC" value="1"></el-option>
 					      <el-option label="EXCLE" value="2"></el-option>
 					    </el-select>
 			    </el-form-item>
-			    <el-form-item label="课程简介" class="moreinfo">
+			    <el-form-item label="资源简介" class="moreinfo" v-if="supplementary">
 				    <el-input type="textarea" :rows="4" resize="none"></el-input>
 				  </el-form-item>
-			    <div class="secondTitle">当前课程信息</div>
+				  <el-form-item label="课程简介" class="moreinfo" v-else>
+				    <el-input type="textarea" :rows="4" resize="none"></el-input>
+				  </el-form-item>
+			    <div class="secondTitle">当前教辅信息</div>
 			    <el-form-item label="学校" >
 			        <el-select v-model="course.schoolId">
-				      <el-option label="区域一" value="22"></el-option>
-				      <el-option label="区域二" value="23"></el-option>
+				      <el-option label="江南大学" value="22"></el-option>
+				      <el-option label="苏州大学" value="23"></el-option>
 				    </el-select>
 			    </el-form-item>
 			    <el-form-item label="年级" >
 			        <el-select v-model="course.gradeId">
-				      <el-option label="区域一" value="3"></el-option>
-				      <el-option label="区域二" value="4"></el-option>
+				      <el-option label="大一" value="3"></el-option>
+				      <el-option label="大二" value="4"></el-option>
+				      <el-option label="大三" value="4"></el-option>
+				      <el-option label="大四" value="4"></el-option>
 				    </el-select>
 			    </el-form-item>
 			    <el-form-item label="教师" >
@@ -162,12 +173,14 @@
   		<div class="editBody fix">
   			<el-form :inline="true" :model="course" class="demo-form-inline">
   				<div class="secondTitle">视频信息</div>
+  				
   				<el-form-item label="是否公开" style="width: 45%;padding-left: 4%;">
 			    	<el-radio-group  style="margin-left:30px;" v-model="course.ispublic">
 				      <el-radio :label="1" name="isCourse">是</el-radio>
 				      <el-radio :label="0" name="isCourse">否</el-radio>
 				    </el-radio-group>
 			    </el-form-item>
+			    
 			    <el-form-item label="课程简介" class="moreinfo">
 				    <el-input type="textarea" :rows="4" resize="none"></el-input>
 				  </el-form-item>
@@ -219,6 +232,7 @@
   export default{
     data () {
       return {
+      	urls:"http://192.168.128.213:8888/balanced-education/teachingfile/upload",
         msg:'hello vue',
         options: [{
           value: '选项1',
@@ -290,6 +304,11 @@
 		  		e.className = e.className.replace(reg,' ');
 		  	}
 		  	obje.className += ' active';
+		  	
+		  	
+		  	
+		  	
+		  	
 				if(type=="supplementary"){
 					this.supplementary = true;
 				}else{
@@ -304,8 +323,38 @@
 				}
 			},
 			dialogEdits(id){
+				
+				
 				this.dialogEdit = true;
-			}
+				
+			
+			},
+			beforeupload(file){
+				var upFileName = file.name;
+        var index1=upFileName.lastIndexOf(".");
+        var index2=upFileName.length;
+        var suffix=upFileName.substring(index1+1,index2);//后缀名
+				if(suffix == "docx" || suffix == "excel" || suffix == "ppt" || suffix == "pdf"){
+					  
+				}else{
+					 this.notify_jr(this,"提示","上传文件格式错误","warning")
+					  return false;
+				}
+				var objs =document.getElementsByClassName("el-upload-list__item")[0];
+				if(objs!=undefined){
+					objs.remove();
+				}
+			},
+			upload_success(response, file, fileList){
+				var code = response.code;
+				if(code=="60000" || code=="50000"){
+					this.$router.push({ path: '/login' });
+				}else if(code=="10000"){
+					this.notify_jr(this,"提示","上传文件成功","success");
+				}else{
+					this.notify_jr(this,"提示","失败"+response.message,"error");
+				}
+			},
 		}
   }
 </script>
@@ -326,4 +375,5 @@
 	#courseVideo .el-form-item__content{width:61%;}
 	#courseVideo .el-cascader.is-opened .el-input__inner{border-color: #66BB6A;width:400px}
 	#courseVideo .el-cascader .el-input__inner{width: 400px;}
+	#courseVideo .el-upload-dragger{height:40px;border:solid 1px #bfcbd9}
 </style>
