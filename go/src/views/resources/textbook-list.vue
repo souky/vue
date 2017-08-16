@@ -1,7 +1,7 @@
 <template>
   <div id="textBook" class="textbook-list-container">
     <el-row type="flex" class="row-bg pt20 pl20" justify="start">
-       <el-col :span="4" class="pct25 mr20 ">
+       	<el-col :span="4" class="pct25 mr20 ">
             <label class="mr20">学校  </label>
             <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="school_chage_q()">
 	            <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -382,21 +382,13 @@
 		  	
 		  },
 		  creatNew(){
-		  	this.postHttp(this,{},"getUUID",function(obj,datas){
-		  		obj.materialId = datas.result;
-		  		var name = obj.levelName;
-			  	var level = 1;
-			  	var parentId = '';
-			  	if(obj.materialId==null){
-			  		obj.notify_jr(obj,'提示','网络错误','warning');
+		  	if(this.materialId!=''){
+      		if(this.levelName==''){
+		  			this.notify_jr(this,'提示','请输入一级大纲名字','warning');
 			  		return;
 			  	}
-			  	if(name==''){
-			  		obj.notify_jr(obj,'提示','请输入一级大纲名字','warning');
-			  		return;
-			  	}
-			  	var data = {name:name,level:level,parentId:parentId,materialId:obj.materialId}
-			  	obj.postHttp(obj,data,"materialsyllabus/saveMaterialSyllabus",function(obj,datas){
+	      	var data = {name:this.levelName,level:1,parentId:'',materialId:this.materialId}
+			  	this.postHttp(this,data,"materialsyllabus/saveMaterialSyllabus",function(obj,datas){
 			  		if(datas.code == '10000'){
 			  			obj.notify_jr(obj,'成功','添加成功','success');
 			  			var data_code = {materialId:obj.materialId}
@@ -408,7 +400,35 @@
 			  			obj.notify_jr(obj,'错误','网络错误','error');
 			  		}
 			  	});
-		  	});
+      	}else{
+      		this.postHttp(this,{},"getUUID",function(obj,datas){
+			  		obj.materialId = datas.result;
+			  		var name = obj.levelName;
+				  	var level = 1;
+				  	var parentId = '';
+				  	if(obj.materialId==null){
+				  		obj.notify_jr(obj,'提示','网络错误','warning');
+				  		return;
+				  	}
+				  	if(name==''){
+				  		obj.notify_jr(obj,'提示','请输入一级大纲名字','warning');
+				  		return;
+				  	}
+				  	var data = {name:name,level:level,parentId:parentId,materialId:obj.materialId}
+				  	obj.postHttp(obj,data,"materialsyllabus/saveMaterialSyllabus",function(obj,datas){
+				  		if(datas.code == '10000'){
+				  			obj.notify_jr(obj,'成功','添加成功','success');
+				  			var data_code = {materialId:obj.materialId}
+				  			obj.textbook['id'] = obj.materialId;
+				  			obj.postHttp(obj,data_code,"materialsyllabus/queryMaterialSyllabussNew",function(obj,data){
+				  				obj.bookSyllabuss = data.result;
+				  			});
+				  		}else{
+				  			obj.notify_jr(obj,'错误','网络错误','error');
+				  		}
+				  	});
+			  	});
+		  	}
 		  },
 		  renderContent(createElement, { node, data, store }) {
         var self = this;  

@@ -198,7 +198,7 @@
 						    </el-form-item>
 						    <el-form-item label="学科" v-if="program.isCourse == 1 && program.type!='VOD'">
 							    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
-								    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
+								    <el-option v-for="item in optionSubject" :key="item.dicCode" :label="item.dicName" :value="item.dicCode"></el-option>
 								</el-select>
 						    </el-form-item>
 						    <el-form-item label="课程大纲" v-if="program.isCourse == 1 && program.type!='VOD'">
@@ -250,7 +250,7 @@
 						    </el-form-item>
 						    <el-form-item label="学科" v-if="program.type=='VOD'">
 							    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
-								    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
+								    <el-option v-for="item in optionSubject" :key="item.dicCode" :label="item.dicName" :value="item.dicCode"></el-option>
 								</el-select>
 						    </el-form-item>
 						    <el-form-item label="视频" v-if="program.type=='VOD'">
@@ -427,6 +427,12 @@
 		this.program.startDate = this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")
 		this.program.endDate = this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")
 		this.onFocus_name();
+		schoolName_in   
+		this.program['schoolName'] = document.getElementById("schoolName_in").getElementsByTagName("input")[0].value;
+		this.program['gradeName'] = document.getElementById("gradeName_in").getElementsByTagName("input")[0].value;
+		this.program['className'] = document.getElementById("className_in").getElementsByTagName("input")[0].value;
+		this.program['subjectName'] = document.getElementById("subjectName_in").getElementsByTagName("input")[0].value;
+		this.program['teacherName'] = document.getElementById("teacherName_in").getElementsByTagName("input")[0].value;
 		var data = this.program;
 		data.programShowIds = this.$refs.playTree.getCheckedKeys();
 		this.postHttp(this,data,"program/saveProgram",this.save_handle);
@@ -434,7 +440,7 @@
 	  save_handle(obj,data){
 	  	if(data.code=="10000"){
 		  		this.notify_jr(this,'编辑节目单','操作成功','success');
-		  		var dataS = {pageNum:1,pageSize:10};
+		  		var dataS = ajax_data(this);
 		  		this.postHttp(this,dataS,'program/findPrograms',this.programInit);
 		  		this.dialogEdit = false;
 		  	}else{
@@ -442,12 +448,14 @@
 		  	}
 	  },
 	  handleSizeChange(val) {
-	  	var dataS = {pageNum:1,pageSize:val};
+		this.pageSize = val;
+		this.pageNum = 1;
+	  	var dataS = ajax_data(this);
 	  	this.postHttp(this,dataS,'program/findPrograms',this.programInit);
 	  },
 	  handleCurrentChange(val) {
-	  	var pageS = this.pageSize;
-	  	var dataS = {pageNum:val,pageSize:pageS};
+	  	this.pageNum = val;
+	  	var dataS = ajax_data(this);
 	    this.postHttp(this,dataS,'program/findPrograms',this.programInit);
 	  },
 	  choiseType(type,event){
