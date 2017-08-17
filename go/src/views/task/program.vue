@@ -197,11 +197,12 @@
 								</el-select>
 						    </el-form-item>
 						    <el-form-item label="学科" v-if="program.isCourse == 1 && program.type!='VOD'">
-							    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
+							    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科" @change="subject_change()">
 								    <el-option v-for="item in optionSubject" :key="item.dicCode" :label="item.dicName" :value="item.dicCode"></el-option>
 								</el-select>
 						    </el-form-item>
 						    <el-form-item label="课程大纲" v-if="program.isCourse == 1 && program.type!='VOD'">
+						    	<el-cascader expand-trigger="click" :options="optionCascader" v-model="program.programScArray"></el-cascader>
 						    </el-form-item>
 						    
 						    <div class="secondTitle" v-if="program.type=='LIVE' || program.type=='RECORD'">录制信息</div>
@@ -350,6 +351,7 @@
 		totals:5,
 		types:'',
         program:{},
+        optionCascader:[],
         
         indents:20,
         organizadata: [{
@@ -409,10 +411,16 @@
 			this.get_options(this,par,"optionGrand");
 			var pars = data.result.gradeId;
 			this.get_options(this,pars,"optionClass");
+			var subject = data.result.subject;
+		  	var datas = {subject:subject};
+		  	this.postHttp(this,datas,"coursesyllabus/queryCSCascader",function(obj,data){
+		  		obj.optionCascader = data.result;
+		  	})
 			this.program = data.result;
 			var s = data.result.programShowIds;
 			this.$refs.playTree.setCheckedKeys(s);
 			document.getElementById("sourceName_in").getElementsByTagName("input")[0].onfocus = this.onFocus_name;
+			
 	  	}
 	  	
 	  },
@@ -424,6 +432,8 @@
 		delete this.program['createDate']
 		delete this.program['updateDate']
 		delete this.program['programShowList']
+		var length = this.program.programScArray.length -1;
+		this.program['syllabusId'] = this.program.programScArray[length];
 		this.program.startDate = this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")
 		this.program.endDate = this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")
 		this.onFocus_name();
@@ -435,6 +445,7 @@
 		this.program['teacherName'] = document.getElementById("teacherName_in").getElementsByTagName("input")[0].value;
 		var data = this.program;
 		data.programShowIds = this.$refs.playTree.getCheckedKeys();
+		console.log(data);
 		this.postHttp(this,data,"program/saveProgram",this.save_handle);
 	  },
 	  save_handle(obj,data){
@@ -542,6 +553,14 @@
 	  	var videos = document.getElementById("playVideo");
 	  	videos.innerHTML = "";
 	  	this.dialogShow = false;
+	  },
+	  subject_change(){
+	  	var subject = this.program.subject;
+	  	var data = {subject:subject};
+	  	this.postHttp(this,data,"coursesyllabus/queryCSCascader",function(obj,data){
+	  		obj.optionCascader = data.result;
+	  	})
+	  	
 	  }
     },
 	mounted:function(){
