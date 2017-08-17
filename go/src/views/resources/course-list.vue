@@ -89,7 +89,7 @@
     			<template scope="scope">
 		    			<i title="查看详细" class="el-icon-information" @click="dialogInfos(scope.row.id)"></i>
 		    			<i title="编辑" class="el-icon-edit" @click="dialogEdits(scope.row.id)"></i>
-		    			<i title="删除" class="el-icon-delete"></i>
+		    			<i title="删除" class="el-icon-delete" @click="delete_course(scope.row.id)"></i>
 		    	</template>
     		</el-table-column>
     	</el-table>
@@ -376,8 +376,9 @@
 			  	delete data['updateDate'];
 			  	this.postHttp(this,data,"course/saveCourse",function(obj,data){
 			  		if(data.code == '10000'){
-			  			var datas = {pageNum:1,pageSize:10}
-	    				obj.postHttp(obj,datas,"course/queryCourses",obj.initTabelDate);
+			  			obj.pageNum = 1;
+			  			obj.pageSzie = 10;
+			  			ajax_data(obj);
 			  			obj.dialogAdd = false;
 			  			obj.notify_jr(obj,"新增课程","成功","success");
 			  		}else{
@@ -394,8 +395,9 @@
 			  	delete data['updateDate'];
 			  	this.postHttp(this,data,"course/updateCourse",function(obj,data){
 			  		if(data.code == '10000'){
-			  			var datas = {pageNum:1,pageSize:10}
-	    				obj.postHttp(obj,datas,"course/queryCourses",obj.initTabelDate);
+			  			obj.pageNum = 1;
+			  			obj.pageSzie = 10;
+			  			ajax_data(obj);
 			  			obj.dialogAdd = false;
 			  			obj.notify_jr(obj,"修改课程","成功","success");
 			  		}else{
@@ -412,13 +414,13 @@
 		    this.total = data.result.total;
 		  },
     	handleSizeChange(val) {
-		  	var dataS = {pageNum:1,pageSize:val};
-		  	//programInit(this,dataS);
+		  	this.pageNum = 1;
+  			this.pageSzie = val;
+  			ajax_data(this);
 		  },
 		  handleCurrentChange(val) {
-		  	var pageS = this.pageSize;
-		  	var dataS = {pageNum:val,pageSize:pageS};
-		    //programInit(this,dataS);
+		  	this.pageNum = val;
+  			ajax_data(this);
 		  },
 		  handleAvatarSuccess(res, file) {
         this.imageUrl = URL.createObjectURL(file.raw);
@@ -640,10 +642,28 @@
 			  	});
       	}
 		  },
+		  delete_course(id){
+		  	this.$confirm('此操作将删除该课程,是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+        	var data = {id:id};
+			  	this.postHttp(this,data,"course/deleteCourse",function(obj,data){
+			  		if(data.code == '10000'){
+			  			obj.notify_jr(obj,"删除","操作成功","success");
+			  			ajax_data(obj);
+			  		}else{
+			  			obj.notify_jr(obj,"删除","失败:"+data.message,"success");
+			  		}
+			  	})
+        }).catch(() => {
+        	
+        });
+		  }
     },
     mounted:function(){
-    	var data = {pageNum:1,pageSize:10}
-    	this.postHttp(this,data,"course/queryCourses",this.initTabelDate);
+    	ajax_data(this);
     	this.get_options(this,"","optionSchool");
 			var data_user = {role:'教师',pageNum:1,pageSize:30};
 	  	this.postHttp(this,data_user,"user/queryUsers",this.user_handle);
@@ -651,6 +671,45 @@
 	  	this.postHttp(this,data_code,"dictionary/getDictionarysBySupCode",this.object_handle);
     }
 
+  }
+  
+  
+  
+  function ajax_data(obj){
+  	var pageNum = obj.pageNum;
+  	var pageSize = obj.pageSize;
+  	var schoolId = obj.optionSchool_val;
+  	var gradeId = obj.optionGrand_val;
+  	var teacherId = obj.optionTeacher_val;
+  	var subject = obj.optionSubject_val;
+  	var name = obj.name_q;
+  	var fromDate = obj.timeF(obj.queryStartDate).format("YYYY-MM-DD HH:mm:ss");
+  	var toDate = obj.timeF(obj.queryEndDate).format("YYYY-MM-DD HH:mm:ss");
+  	if(fromDate == 'Invalid date'){
+  		fromDate = null;
+  	}
+  	if(toDate == 'Invalid date'){
+  		toDate = null;
+  	}
+  	var data = {
+  		schoolId:schoolId,
+  		gradeId:gradeId,
+  		teacherId:teacherId,
+  		subject:subject,
+  		pageSize:pageSize,
+  		pageNum:pageNum,
+  		name:name,
+  		fromDate:fromDate,
+  		toDate:toDate
+  	}
+  	
+  	obj.postHttp(obj,data,"course/queryCourses",function(obj,data){
+  		obj.tableData = data.result.list;
+	    obj.pageNum = data.result.pageNum;
+	    obj.pageSize = data.result.pageSize;
+	    obj.total = data.result.total;
+  	})
+  	
   }
 </script>
 

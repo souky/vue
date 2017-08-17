@@ -129,11 +129,12 @@
 					</el-select>
 			    </el-form-item>
 			    <el-form-item label="学科" v-if="program.isCourse == 1 && program.type != 'VOD'">
-				    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
-					    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
+				    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科" @change="subject_change()">
+					    <el-option v-for="item in optionSubject" :key="item.dicCode" :label="item.dicName" :value="item.dicCode"></el-option>
 					</el-select>
 			    </el-form-item>
 			    <el-form-item label="课程大纲" v-if="program.isCourse == 1 && program.type != 'VOD'">
+			    	<el-cascader expand-trigger="click" :options="optionCascader" v-model="program.programScArray"></el-cascader>
 			    </el-form-item>
 			    
 			    <div class="secondTitle" v-if="program.type != 'VOD'">录制信息</div>
@@ -181,14 +182,14 @@
 					</el-select>
 			    </el-form-item>
 			    <el-form-item label="学科" v-if="program.type == 'VOD'">
-				    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
-					    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
+				    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科" @change="subject_change()">
+					    <el-option v-for="item in optionSubject" :key="item.dicCode" :label="item.dicName" :value="item.dicCode"></el-option>
 					</el-select>
 			    </el-form-item>
 			    <el-form-item label="视频" v-if="program.type == 'VOD'">
-				    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
-					    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
-					</el-select>
+				    <el-select v-model="program.videoPath" placeholder="请选择视频">
+						    <el-option v-for="item in optionVideo" :key="item.path" :label="item.name" :value="item.path"></el-option>
+						</el-select>
 			    </el-form-item>
 			    
 			    <div class="secondTitle" v-if="program.type == 'LIVE' || program.type == 'VOD'">播放信息</div>
@@ -274,6 +275,8 @@
 	      	type:'',
 	      	schoolName:'',
 	      	gradeName:'',
+	      	videoPath:'',
+	      	programScArray:[]
 	      },
 	      time_point:[{
 	      	time:'9:00'
@@ -296,6 +299,9 @@
 	      },{
 	      	time:'18:00'
 	      }],
+	      
+	      optionVideo:null,
+	      optionCascader:[],
       }
     },
     methods:{
@@ -357,12 +363,33 @@
 		  	items_init(this);
 		  },
 		  saveprogarm(){
-		  	this.program.startDate = this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")
-				this.program.endDate = this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")
-				this.onFocus_name();
-				var data = this.program;
-				data.programShowIds = this.$refs.playTree.getCheckedKeys();
-				this.postHttp(this,data,"program/saveProgram",this.save_handle);
+					if(this.program.programScArray){
+						var length = (this.program.programScArray.length -1) == -1?0:(this.program.programScArray.length -1);
+						this.program['syllabusId'] = this.program.programScArray[length];
+					}
+					this.program.startDate = this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")
+					this.program.endDate = this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")
+					this.onFocus_name();
+					if(document.getElementById("schoolName_in")!=null){
+						this.program['schoolName'] = document.getElementById("schoolName_in").getElementsByTagName("input")[0].value;
+					}
+					if(document.getElementById("gradeName_in")!=null){
+						this.program['gradeName'] = document.getElementById("gradeName_in").getElementsByTagName("input")[0].value;
+					}
+					if(document.getElementById("className_in")!=null){
+						this.program['className'] = document.getElementById("className_in").getElementsByTagName("input")[0].value;
+					}
+					if(document.getElementById("subjectName_in")!=null){
+						this.program['subjectName'] = document.getElementById("subjectName_in").getElementsByTagName("input")[0].value;
+					}
+					if(document.getElementById("teacherName_in")!=null){
+						this.program['teacherName'] = document.getElementById("teacherName_in").getElementsByTagName("input")[0].value;
+					}
+					var data = this.program;
+					if(this.$refs.playTree!=undefined){
+						data.programShowIds = this.$refs.playTree.getCheckedKeys();
+					}
+					this.postHttp(this,data,"program/saveProgram",this.save_handle);
 		  },
 		  save_handle(obj,data){
 		  	if(data.code=="10000"){
@@ -400,9 +427,20 @@
 	      	endDate:null,
 	      	name:'',
 	      	type:'',
+	      	videoPath:'',
+	      	schoolName:'',
+	      	gradeName:'',
+	      	programScArray:[]
 		  	}
 		  	this.dialog_program = false;
 		  	this.$refs.playTree.setCheckedKeys([]);
+		  },
+		  subject_change(){
+		  	var subject = this.program.subject;
+		  	var data = {subject:subject};
+		  	this.postHttp(this,data,"coursesyllabus/queryCSCascader",function(obj,data){
+		  		obj.optionCascader = data.result;
+		  	})
 		  },
     },
     mounted:function(){
@@ -416,6 +454,10 @@
 	  	
 	  	var data = {}
     	this.postHttp(this,data,"organization/queryOrganizations",this.init_organiza);
+    	
+    	this.postHttp(this,{},"teachingfile/queryTeachingFilesVideo",function(obj,data){
+    		obj.optionVideo = data.result;
+    	})
     }
   }
   
@@ -493,10 +535,6 @@
 		}
 		if(gradeId==""){
 			obj.notify_jr(obj,"提示","请选择年级","warning");
-			return null;
-		}
-		if(remark==""){
-			obj.notify_jr(obj,"提示","请选择班级","warning");
 			return null;
 		}
 		var pageNum = 1;

@@ -53,7 +53,7 @@
     		<el-table-column label="操作" align="center" show-overflow-tooltip min-width="150px">
     			<template scope="scope">
 		    			<i title="编辑" class="el-icon-edit" @click="dialogEdits(scope.row.id)"></i>
-		    			<i title="删除" class="el-icon-delete"></i>
+		    			<i title="删除" class="el-icon-delete" @click="dialogDelete(scope.row.id)"></i>
 		    	</template>
     		</el-table-column>
     	</el-table>
@@ -305,12 +305,30 @@
     		}else{
 					this.notify_jr(this,'重置密码',data.message,'error');    			
     		}
+    	},
+    	dialogDelete(id){
+    		this.$confirm('此操作将删除该账号,是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+        	var data = {id:id};
+			  	this.postHttp(this,data,"user/deleteUser",function(obj,data){
+			  		if(data.code == '10000'){
+			  			obj.notify_jr(obj,"删除","操作成功","success");
+			  			var dataS = ajaxDate(obj);
+    					initDate(obj,dataS);
+			  		}else{
+			  			obj.notify_jr(obj,"删除","失败:"+data.message,"success");
+			  		}
+			  	})
+        }).catch(() => {
+        	
+        });
     	}
     },
     mounted:function(){
     	this.get_options(this,"","optionSchool");
-    	
-    	console.log(this.pageNum)
     	var data = ajaxDate(this);
     	initDate(this,data);
     }

@@ -75,7 +75,7 @@
 			    			<i title="查看详细" class="el-icon-information" @click="dialogInfos(scope.row.id)"></i>
 			    			<i title="预览视频" class="el-icon-search" @click="dialogShows(scope.row.id)"></i>
 			    			<i title="编辑" class="el-icon-edit" @click="dialogEdits(scope.row.id)"></i>
-			    			<i title="删除" class="el-icon-delete"></i>
+			    			<i title="删除" class="el-icon-delete" @click="dialogDelete(scope.row.id)"></i>
 			    	</template>
 			    </el-table-column>
 		  	</el-table>
@@ -255,8 +255,8 @@
 								</el-select>
 						    </el-form-item>
 						    <el-form-item label="视频" v-if="program.type=='VOD'">
-							    <el-select id="subjectName_in" v-model="program.subject" placeholder="请选择学科">
-								    <el-option v-for="item in optionSubject" :key="item.id" :label="item.dicName" :value="item.id"></el-option>
+							    <el-select v-model="program.videoPath" placeholder="请选择视频">
+								    <el-option v-for="item in optionVideo" :key="item.path" :label="item.name" :value="item.path"></el-option>
 								</el-select>
 						    </el-form-item>
 						    
@@ -370,6 +370,8 @@
         
         videoSrc:'http://he.yinyuetai.com/uploads/videos/common/C033015644E6D35D99022E014A4761A1.flv?sc\u003d6cbd6cfc31def573\u0026br\u003d3138\u0026vid\u003d2650626\u0026aid\u003d167\u0026area\u003dHT\u0026vst\u003d2',
         
+        optionVideo:null,
+        
       }
     },
 	methods: {
@@ -421,8 +423,9 @@
 			if(this.$refs.playTree){
 				this.$refs.playTree.setCheckedKeys(s);
 			}
-			document.getElementById("sourceName_in").getElementsByTagName("input")[0].onfocus = this.onFocus_name;
-			
+			if(document.getElementById("sourceName_in")){
+				document.getElementById("sourceName_in").getElementsByTagName("input")[0].onfocus = this.onFocus_name;
+			}
 	  	}
 	  	
 	  },
@@ -430,33 +433,40 @@
 		var iscourse = this.program.isCourse
 	  },
 	  saveprogarm(){
-		
 		delete this.program['createDate']
 		delete this.program['updateDate']
 		delete this.program['programShowList']
-		var length = this.program.programScArray.length -1;
-		this.program['syllabusId'] = this.program.programScArray[length];
+		if(this.program.programScArray){
+			var length = this.program.programScArray.length -1;
+			this.program['syllabusId'] = this.program.programScArray[length];
+		}
 		this.program.startDate = this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")
 		this.program.endDate = this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")
 		this.onFocus_name();
-		this.program['schoolName'] = document.getElementById("schoolName_in").getElementsByTagName("input")[0].value;
-		this.program['gradeName'] = document.getElementById("gradeName_in").getElementsByTagName("input")[0].value;
-		this.program['className'] = document.getElementById("className_in").getElementsByTagName("input")[0].value;
-		this.program['subjectName'] = document.getElementById("subjectName_in").getElementsByTagName("input")[0].value;
-		this.program['teacherName'] = document.getElementById("teacherName_in").getElementsByTagName("input")[0].value;
+		if(document.getElementById("schoolName_in")!=null){
+			this.program['schoolName'] = document.getElementById("schoolName_in").getElementsByTagName("input")[0].value;
+			this.program['gradeName'] = document.getElementById("gradeName_in").getElementsByTagName("input")[0].value;
+			this.program['className'] = document.getElementById("className_in").getElementsByTagName("input")[0].value;
+			this.program['subjectName'] = document.getElementById("subjectName_in").getElementsByTagName("input")[0].value;
+			if(document.getElementById("teacherName_in")!=null){
+				this.program['teacherName'] = document.getElementById("teacherName_in").getElementsByTagName("input")[0].value;
+			}
+		}
 		var data = this.program;
-		data.programShowIds = this.$refs.playTree.getCheckedKeys();
+		if(this.$refs.playTree!=undefined){
+			data.programShowIds = this.$refs.playTree.getCheckedKeys();
+		}
 		this.postHttp(this,data,"program/saveProgram",this.save_handle);
 	  },
 	  save_handle(obj,data){
 	  	if(data.code=="10000"){
-		  		this.notify_jr(this,'编辑节目单','操作成功','success');
-		  		var dataS = ajax_data(this);
-		  		this.postHttp(this,dataS,'program/findPrograms',this.programInit);
-		  		this.dialogEdit = false;
-		  	}else{
-		  		this.notify_jr(this,'编辑节目单',data.message,'error');
-		  	}
+	  		this.notify_jr(this,'编辑节目单','操作成功','success');
+	  		var dataS = ajax_data(this);
+	  		this.postHttp(this,dataS,'program/findPrograms',this.programInit);
+	  		this.dialogEdit = false;
+	  	}else{
+	  		this.notify_jr(this,'编辑节目单',data.message,'error');
+	  	}
 	  },
 	  handleSizeChange(val) {
 		this.pageSize = val;
@@ -528,10 +538,12 @@
 		}
 	  },
 	  onFocus_name(){
-	  	var s1 = document.getElementById("schoolName_in").getElementsByTagName("input")[0].value;
-	  	var s2 = document.getElementById("gradeName_in").getElementsByTagName("input")[0].value;
-	  	var s3 = document.getElementById("className_in").getElementsByTagName("input")[0].value;
-	  	this.program.sourceName = s1+s2+s3;
+	  	if(document.getElementById("schoolName_in")!=null){
+	  		var s1 = document.getElementById("schoolName_in").getElementsByTagName("input")[0].value;
+		  	var s2 = document.getElementById("gradeName_in").getElementsByTagName("input")[0].value;
+		  	var s3 = document.getElementById("className_in").getElementsByTagName("input")[0].value;
+		  	this.program.sourceName = s1+s2+s3;
+	  	}
 	  },
 	  query_program(){
 	  	this.pageNum = 1;
@@ -560,7 +572,28 @@
 	  	this.postHttp(this,data,"coursesyllabus/queryCSCascader",function(obj,data){
 	  		obj.optionCascader = data.result;
 	  	})
-	  	
+	  },
+	  dialogDelete(id){
+	  	this.$confirm('此操作将删除该课程,是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+        	var data = {id:id};
+		  	delete data["createDate"];
+		  	delete data["updataDate"];
+		  	this.postHttp(this,data,"program/deleteProgram",function(obj,data){
+		  		if(data.code=="10000"){
+		  			obj.notify_jr(obj,"删除","操作成功","success");
+		  			var dataS = ajax_data(obj);
+					obj.postHttp(obj,dataS,'program/findPrograms',obj.programInit);
+		  		}else{
+		  			obj.notify_jr(obj,"删除","失败:"+data.message,"success");
+		  		}
+		  		
+		  	})
+        }).catch(() => {
+        });
 	  }
     },
 	mounted:function(){
@@ -575,7 +608,9 @@
       	var data = {}
     	this.postHttp(this,data,"organization/queryOrganizations",this.init_organiza);
     	
-    	
+    	this.postHttp(this,{},"teachingfile/queryTeachingFilesVideo",function(obj,data){
+    		obj.optionVideo = data.result;
+    	})
 	}
   }
   

@@ -164,10 +164,11 @@
 	    		</div>
   			</div>
   			<div class="rightPart l fix">
-  				<div class="l ml30">课程图片</div>
-  				<div class="l rightImg">
+  				
+  				<div class="r rightImg">
   					<img src="">
   				</div>
+  				<div class="r ml30">课程图片</div>
 				</div>
 				<div class="l el-form-item" style="width: 100%;margin-top:40px;">
 					<label class="el-form-item__label" style="width: 80px;">教材大纲</label>
@@ -563,10 +564,12 @@
   #textBook .bigSteel{width: 67%;border:1px #BFCBD9 solid;height: 200px;border-radius: 3px;padding:5px 2%;}
   #textBook .infoItems{width: 100%;}
   
+  #textBook .infoBody{padding-top:30px;}
   #textBook .ml30{margin-left:70px}
-  #textBook .rightImg{width:122px;height: 140px;background:#D8D8D8;border: 1px solid #979797;margin-left:20px;}
+  #textBook .rightImg{width:122px;height: 140px;background:#D8D8D8;border: 1px solid #979797;margin-left:20px;margin-right:75px;}
   #textBook .infoItems .tr{width: 30%;}
   
+  #textBook #textBookT{width:90%;}
   #textBook #textBookT i{font-size:14px;padding:3px;margin-right:20px;border-radius:2px;}
   #textBook .el-icon-plus{color:#EF5350;border:1px #EF5350 solid;}
 	#textBook .el-icon-minus{color:#FFCA28;border:1px #FFCA28 solid;}
