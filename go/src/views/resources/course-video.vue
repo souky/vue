@@ -8,7 +8,7 @@
     <el-row type="flex" class="row-bg pt20 pl20" justify="start">
         <el-col :span="4" class="pct25 mr20 ">
             <label class="mr20">学校  </label>
-            <el-select v-model="value" class="pct70" placeholder="请选择学校">
+            <el-select v-model="value" class="pct70" placeholder="请选择学校" >
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
         </el-col>
@@ -26,7 +26,7 @@
         </el-col>
         <el-col :span="4" class="pct25">
             <label class="mr20">学科</label>
-            <el-select v-model="value" class="pct70" placeholder="请选择学科">
+            <el-select v-model="value" class="pct70" placeholder="请选择学科" >
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
         </el-col>
@@ -126,29 +126,23 @@
 				  </el-form-item>
 			    <div class="secondTitle">当前教辅信息</div>
 			    <el-form-item label="学校" >
-			        <el-select v-model="course.schoolId">
-				      <el-option label="江南大学" value="22"></el-option>
-				      <el-option label="苏州大学" value="23"></el-option>
-				    </el-select>
+			        <el-select v-model="course.schoolId"  @change="change_school()">
+				      <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
+				      </el-select>
 			    </el-form-item>
 			    <el-form-item label="年级" >
-			        <el-select v-model="course.gradeId">
-				      <el-option label="大一" value="3"></el-option>
-				      <el-option label="大二" value="4"></el-option>
-				      <el-option label="大三" value="4"></el-option>
-				      <el-option label="大四" value="4"></el-option>
+			        <el-select v-model="course.gradeId" >
+				      <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
 				    </el-select>
 			    </el-form-item>
 			    <el-form-item label="教师" >
 			        <el-select v-model="course.teacherId">
-				      <el-option label="区域一" value="12"></el-option>
-				      <el-option label="区域二" value="123"></el-option>
+				      <el-option v-for="item in optionTeacher" :key="item.id" :label="item.name" :value="item.id"></el-option>
 				    </el-select>
 			    </el-form-item>
 			    <el-form-item label="学科" >
-			        <el-select v-model="course.subject">
-				      <el-option label="区域一" value="shanghai"></el-option>
-				      <el-option label="区域二" value="beijing"></el-option>
+			        <el-select v-model="course.subject" @change="change_subject()">
+				      <el-option v-for="item in optionSubject" :key="item.dicName" :label="item.dicName" :value="item.dicName"></el-option>
 				    </el-select>
 			    </el-form-item>
 			    <el-form-item label="大纲" >
@@ -186,15 +180,13 @@
 				  </el-form-item>
 				  <div class="secondTitle">当前课程信息</div>
 			    <el-form-item label="学校" >
-			        <el-select v-model="course.schoolId">
-				      <el-option label="区域一" value="22"></el-option>
-				      <el-option label="区域二" value="23"></el-option>
+			        <el-select v-model="course.schoolId" @change="change_school()">
+				      <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
 				    </el-select>
 			    </el-form-item>
 			    <el-form-item label="年级" >
-			        <el-select v-model="course.gradeId">
-				      <el-option label="区域一" value="3"></el-option>
-				      <el-option label="区域二" value="4"></el-option>
+			        <el-select v-model="course.gradeId" >
+				      <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
 				    </el-select>
 			    </el-form-item>
 			    <el-form-item label="教师" >
@@ -204,9 +196,8 @@
 				    </el-select>
 			    </el-form-item>
 			    <el-form-item label="学科" >
-			        <el-select v-model="course.subject">
-				      <el-option label="区域一" value="shanghai"></el-option>
-				      <el-option label="区域二" value="beijing"></el-option>
+			        <el-select v-model="course.subject" @change="change_subject()">
+				      <el-option v-for="item in optionSubject" :key="item.dicName" :label="item.dicName" :value="item.dicName"></el-option>
 				    </el-select>
 			    </el-form-item>
 			    <el-form-item label="大纲" >
@@ -234,6 +225,15 @@
       return {
       	urls:"http://192.168.128.213:8888/balanced-education/teachingfile/upload",
         msg:'hello vue',
+        optionSchool:null,
+        optionGrand:null,
+        optionSubject:null,
+        optionTeacher:null,
+        optionTeacher_val:'',
+        optionSchool_val:'',
+        optionGrand_val:'',
+        optionSubject_val:'',
+      
         options: [{
           value: '选项1',
           label: '黄金糕'
@@ -287,13 +287,25 @@
         ],
 		    course:{
 		    	ispublic:1,
-		    	source:1
+		    	source:1,
+		    	schoolId:'',
+		    	subject:'',
+		    	gradeId:'',
 		    }
       }
     },
 		methods:{
 			upload(){
 				this.dialogUpload = true;
+				this.course={
+		    	ispublic:1,
+		    	source:1,
+		    	schoolId:'',
+		    	subject:'',
+		    	gradeId:'',
+		    	teacherId:'',
+		    	
+		    }
 			},
 			choiseType(type,event){
 				var obje = event.currentTarget;
@@ -355,6 +367,33 @@
 					this.notify_jr(this,"提示","失败"+response.message,"error");
 				}
 			},
+			change_school(){
+		  	var id = this.course.schoolId;
+		  	this.optionGrand = null;
+		  	this.get_options(this,id,"optionGrand");
+			},
+			change_subject(){
+		  	var subject = this.course.subject
+		  	var data = {subject:subject,pageNum:1,pageSize:50};
+		  	this.postHttp(this,data,"material/queryMaterials",function(obj,data){
+		  		obj.optionMaterial = data.result.list;
+		  	})
+		  },
+		  user_handle(obj,data){
+		  	this.optionTeacher = data.result.list;
+		  },
+		},
+		
+		mounted:function(){
+    	this.get_options(this,"","optionSchool");
+			var data_user = {role:'教师',pageNum:1,pageSize:30};
+	  	this.postHttp(this,data_user,"user/queryUsers",this.user_handle);
+			
+			this.get_options(this,"","optionSchool");
+			var data_code ={code:'SUBJECT'};
+  		this.postHttp(this,data_code,"dictionary/getDictionarysBySupCode",function(obj,data){
+  			obj.optionSubject = data.result;
+  		})
 		}
   }
 </script>
