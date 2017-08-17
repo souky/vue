@@ -122,10 +122,7 @@
 			    <el-form-item label="资源类型">
 			        <el-input class="pct70" placeholder="自动获取" readonly v-model="course.category"></el-input>
 			    </el-form-item>
-			    <el-form-item label="资源简介" class="moreinfo" v-if="supplementary">
-				    <el-input type="textarea" :rows="4" resize="none" v-model="course.remark"></el-input>
-				  </el-form-item>
-				  <el-form-item label="课程简介" class="moreinfo" v-else>
+			    <el-form-item label="资源简介" class="moreinfo">
 				    <el-input type="textarea" :rows="4" resize="none" v-model="course.remark"></el-input>
 				  </el-form-item>
 			    <div class="secondTitle">当前文件信息</div>
@@ -165,7 +162,7 @@
 				    </el-radio-group>
 			    </el-form-item>
 			    
-			    <el-form-item label="课程简介" class="moreinfo">
+			    <el-form-item label="资源简介" class="moreinfo">
 				    <el-input type="textarea" :rows="4" resize="none" v-model="course.remark"></el-input>
 				  </el-form-item>
 				  <div class="secondTitle">当前资源信息</div>
@@ -267,7 +264,7 @@
 				initTable(this);
 			},
 			isPublic(row, column){
-				if(row.ispublic=="1"){
+				if(row.isPublic=="1"){
 					return "是";
 				}else{
 					return "否";
@@ -399,7 +396,7 @@
 		  		if(data.code == '10000'){
 		  			obj.notify_jr(obj,"新增","操作成功","success");
 		  			initTable(obj);
-		  			this.dialogUpload = false;
+		  			obj.dialogUpload = false;
 		  		}else{
 		  			obj.notify_jr(obj,"新增","失败:"+data.message,"success");
 		  		}
@@ -415,7 +412,9 @@
 		  	this.course.courseSyllabusId = arrays[(arrays.length-1)];
 		  	
 		  	var data = {
+		  		id:this.course.id,
 		  		name:this.course.name,
+		  		isPublic:this.course.isPublic,
 		  		courseId:this.course.courseId,
 		  		courseSyllabusId:this.course.courseSyllabusId,
 		  		remark:this.course.remark
