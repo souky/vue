@@ -40,7 +40,7 @@
     },
     components: {ZHeader,ZMenu,ZHome},
     mounted:function(){
-    	//document.getElementsByClassName("el-menu-item")[0].click();
+    	document.getElementsByClassName("el-menu-item")[0].click();
     }
     
   }

@@ -45,7 +45,7 @@
     <div class="main-container">
       <!--表格部分-->
       <el-table :data="tableData" stripe row-key="id" style="width:100%;margin-top: 20px;">
-    		<el-table-column prop="orgId" label="学校" align="center" show-overflow-tooltip> </el-table-column>
+    		<el-table-column prop="organization.name" label="学校" align="center" show-overflow-tooltip> </el-table-column>
     		<el-table-column prop="role" label="角色" align="center" show-overflow-tooltip> </el-table-column>
     		<el-table-column prop="userName" label="账户名" align="center" show-overflow-tooltip> </el-table-column>
     		<el-table-column prop="name" label="姓名" align="center" show-overflow-tooltip> </el-table-column>

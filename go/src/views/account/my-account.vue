@@ -21,7 +21,7 @@
                   <span>真实姓名：</span><span>{{user.name}}</span>
                 </li>
                 <li>
-                  <span>学校：</span><span>{{user.orgId}}</span>
+                  <span>学校：</span><span>{{user.organization.name}}</span>
                 </li>
                 <li>
                   <span>职位：</span><span>{{user.position}}</span>

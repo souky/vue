@@ -418,7 +418,9 @@
 		  	})
 			this.program = data.result;
 			var s = data.result.programShowIds;
-			this.$refs.playTree.setCheckedKeys(s);
+			if(this.$refs.playTree){
+				this.$refs.playTree.setCheckedKeys(s);
+			}
 			document.getElementById("sourceName_in").getElementsByTagName("input")[0].onfocus = this.onFocus_name;
 			
 	  	}
@@ -437,7 +439,6 @@
 		this.program.startDate = this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.startDate).format("YYYY-MM-DD HH:mm:ss")
 		this.program.endDate = this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'':this.timeF(this.program.endDate).format("YYYY-MM-DD HH:mm:ss")
 		this.onFocus_name();
-		schoolName_in   
 		this.program['schoolName'] = document.getElementById("schoolName_in").getElementsByTagName("input")[0].value;
 		this.program['gradeName'] = document.getElementById("gradeName_in").getElementsByTagName("input")[0].value;
 		this.program['className'] = document.getElementById("className_in").getElementsByTagName("input")[0].value;
@@ -445,7 +446,6 @@
 		this.program['teacherName'] = document.getElementById("teacherName_in").getElementsByTagName("input")[0].value;
 		var data = this.program;
 		data.programShowIds = this.$refs.playTree.getCheckedKeys();
-		console.log(data);
 		this.postHttp(this,data,"program/saveProgram",this.save_handle);
 	  },
 	  save_handle(obj,data){
