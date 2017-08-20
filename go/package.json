@@ -2,7 +2,7 @@
   "name": "goldsun",
   "version": "1.0.0",
   "description": "vue+webpack",
-  "author": "shuaishuaige",
+  "author": "souky",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",

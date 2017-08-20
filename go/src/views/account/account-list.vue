@@ -266,7 +266,7 @@
     		this.user["orgId"] = this.select_sc;
     		this.user["role"] = this.select_role;
     		var data = this.user;
-    		
+    		delete data['organization'];
     		this.$refs['user_update'].validate((valid) => {
           if (valid) {
           	this.postHttp(this,data,"user/updateUser",this.ajax_handle);
