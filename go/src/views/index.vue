@@ -30,7 +30,7 @@
 	axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 	Vue.prototype.$axios = axios;
 
-	const baseUrl = "http://192.168.128.213:8888/balanced-education/";
+	const baseUrl = "http://192.168.128.99:8080/balanced-education/";
 	
   export default {
     name: 'app',

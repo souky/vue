@@ -28,7 +28,8 @@ const service = require('./views/device/service.vue');
 const login = require("./views/login.vue");
 
 export default new Router({
-  routes: [
+mode:'history', 
+ routes: [
     { path: '/', component: index,
       children: [
         {
