@@ -195,7 +195,7 @@
   export default{
     data () {
       return {
-      	urls:"http://192.168.128.213:8888/balanced-education/teachingfile/upload",
+      	urls:"",
         msg:'hello vue',
         optionSchool:null,
         optionGrand:null,
@@ -307,6 +307,8 @@
 				if(objs!=undefined){
 					objs.remove();
 				}
+				
+				return true;
 			},
 			upload_success(response, file, fileList){
 				var code = response.code;
@@ -465,6 +467,9 @@
   		});
   		
   		initTable(this);
+  		
+  		var baseUrl = this.getBaseUrl();
+			this.urls = baseUrl+'uploadFile/upload';
 		}
   }
   

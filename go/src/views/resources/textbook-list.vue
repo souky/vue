@@ -128,7 +128,8 @@
 			</div>
 			<div class="editBottom fix">
 				<div class="l">
-					<div class="saveInfo tc poi auto" @click="savetextBook()">保存</div>
+					<div v-if='isEdit' class="saveInfo tc poi auto" @click="savetextBook()">保存</div>
+					<div v-else class="saveInfo tc poi auto" @click="updatetextBook()">保存</div>
 				</div>
 				<div class="l">
 					<div class="cancleInfo tc poi auto" @click="addTextbookClose()">取消</div>								
@@ -223,6 +224,7 @@
         optionGrand_val:'',
         optionSubject_val:'',
         name_q:'',
+        isEdit:true,
         
         tableData:[],
         pageNum:1,
@@ -267,13 +269,33 @@
 			addTextbook(){
 				this.infoTitles = "新增教材";
 				this.dialogaddbook = true;
+				this.isEdit = true;
 			},
 			savetextBook(){
 				var data = this.textbook;
 				data['publicationDate'] = this.timeF(this.publicationDate).format("YYYY-MM-DD HH:mm:ss");
+				data['createDate'] = this.timeF(this.createDate).format("YYYY-MM-DD HH:mm:ss");
+				data['updateDate'] = this.timeF(this.updateDate).format("YYYY-MM-DD HH:mm:ss");
 				this.postHttp(this,data,"material/saveMaterial",function(obj,data){
 					if(data.code == '10000'){
 			  			obj.notify_jr(obj,'成功','添加成功','success');
+							obj.addTextbookClose();
+			  			
+			  			var dataS = ajaxData(obj);
+							init_tabel(obj,dataS);
+			  		}else{
+			  			obj.notify_jr(obj,'错误','网络错误','error');
+			  		}
+				});
+			},
+			updatetextBook(){
+				var data = this.textbook;
+				data['publicationDate'] = this.timeF(this.publicationDate).format("YYYY-MM-DD HH:mm:ss");
+				data['createDate'] = this.timeF(this.createDate).format("YYYY-MM-DD HH:mm:ss");
+				data['updateDate'] = this.timeF(this.updateDate).format("YYYY-MM-DD HH:mm:ss");
+				this.postHttp(this,data,"material/updateMaterial",function(obj,data){
+					if(data.code == '10000'){
+			  			obj.notify_jr(obj,'成功','编辑成功','success');
 							obj.addTextbookClose();
 			  			
 			  			var dataS = ajaxData(obj);
@@ -317,6 +339,7 @@
 				this.infoTitles = "编辑教材";
 				this.dialogaddbook = true;
 				this.bookSyllabuss = null;
+				this.isEdit = false;
 				var data = {id:id}
 				this.materialId = id;
 				this.postHttp(this,data,"material/queryMaterialById",function(obj,data){
