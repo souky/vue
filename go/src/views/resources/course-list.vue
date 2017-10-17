@@ -3,25 +3,44 @@
     <el-row type="flex" class="row-bg pt20 pl20" justify="start">
         <el-col :span="4" class="pct25 mr20 ">
             <label class="mr20">学校  </label>
-            <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="school_chage_q()">
+            <el-select v-model="optionSchool_val" 
+            			class="pct70" 
+            			placeholder="请选择学校" 
+            			clearable
+            			@clear="clearSchool" 
+            			@change="school_chage_q()">
 	            <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
 	        	</el-select>
         </el-col>
         <el-col :span="4" class="pct25 mr20">
             <label class="mr20">年级</label>
-            <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级">
+            <el-select v-model="optionGrand_val" 
+            		   class="pct70" 
+            		   placeholder="请选择年级"
+            		   clearable
+            		   @clear="clearGrand" 
+            		   >
                 <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
         </el-col>
         <el-col :span="4" class="pct25 mr20">
             <label class="mr20">教师</label>
-            <el-select v-model="optionTeacher_val" class="pct70" placeholder="请选择教师">
+            <el-select v-model="optionTeacher_val" 
+            		   class="pct70" 
+            		   placeholder="请选择教师"
+            		   clearable
+            		   @clear="clearTeacher" 
+            		   >
                 <el-option v-for="item in optionTeacher" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
         </el-col>
         <el-col :span="4" class="pct25">
             <label class="mr20">学科</label>
-            <el-select v-model="optionSubject_val" class="pct70" placeholder="请选择学科">
+            <el-select v-model="optionSubject_val" 
+            		   class="pct70" 
+            		   placeholder="请选择学科"
+            		   clearable
+            		   >
                 <el-option v-for="item in optionSubject" :key="item.dicCode" :label="item.dicName" :value="item.dicCode"></el-option>
             </el-select>
         </el-col>
@@ -55,7 +74,7 @@
         <!-- 查询 -->
         <el-col :span="4" class="pct25">
         		<label class="mr20"></label>
-            <el-button type="success" class="pct70 l">查询</el-button>
+            <el-button type="success" class="pct70 l" @click="sleectAll">查询</el-button>
         </el-col>
     </el-row>
     
@@ -160,7 +179,7 @@
   					<label class="el-form-item__label" style="width: 80px;">课程大纲</label>
   					<div class="el-form-item__content" style="margin-left: 80px;">
   						<el-tree id="courses"  ref="courseTree" default-expand-all :data="courseSyllabuss" :props="defaultProps" :render-content="renderContent" node-key="id" :indent="indents">
-							</el-tree>
+						</el-tree>
   					</div>
   				</div>
   				<div class="l fix" v-else style="width:100%">
@@ -198,7 +217,7 @@
 	    			</div>
 	    			<div class="infoItems fix l">
 	    				<div class="l part tr">开始日期:</div>
-	    				<div class="l part tl">{{course.startDate}}</div>
+	    				<div class="l part tl">{{timeF(course.startDate).format("YYYY-MM-DD HH:mm")}}</div>
 	    			</div>
 	    			<div class="infoItems fix l">
 	    				<div class="l part tr">学校:</div>
@@ -218,7 +237,7 @@
 	    			</div>
 	    			<div class="infoItems fix l">
 	    				<div class="l part tr">教材:</div>
-	    				<div class="l part tl">{{course.materialId}}</div>
+	    				<div class="l part tl">{{course.name}}</div>
 	    			</div>
 	    		</div>
   			</div>
@@ -238,7 +257,7 @@
 					<label class="el-form-item__label" style="width: 90px;padding-top:6px;color:#272727;">课程大纲</label>
 					<div class="el-form-item__content" style="margin-left: 90px;">
 						<el-tree id="courses"  default-expand-all :data="courseSyllabuss" :props="defaultProps" node-key="id" :indent="indents">
-							</el-tree>
+						</el-tree>
 					</div>
 				</div>
 			</div>
@@ -278,7 +297,6 @@
       };
       return {
         msg:'hello vue',
-        
         optionSchool:null,
         optionGrand:null,
         optionTeacher:null,
@@ -290,7 +308,6 @@
         optionSubject_val:'',
         queryStartDate:'',
         queryEndDate:'',
-        
         dialogAdd:false,
         dialogInfo:false,
         course:{},
@@ -352,15 +369,15 @@
 		  },
 		  dialogAdds(){
 		  	this.course = {
-        	schoolId:'',
-        	gradeId:'',
-        	subject:'',
-        	teacherId:'',
-        	name:'',
-        	startDate:'',
-        	coverImg:'',
-        	materialId:'',
-        }
+	        	schoolId:'',
+	        	gradeId:'',
+	        	subject:'',
+	        	teacherId:'',
+	        	name:'',
+	        	startDate:'',
+	        	coverImg:'',
+	        	materialId:'',
+        	}
 		  	this.courseSyllabuss = null;
 		  	this.dialogAdd = true;
 		  	this.infoTitles = "新增";
@@ -445,6 +462,17 @@
 					this.get_options(this,id,"optionGrand");
 				}
 	  	},
+	  	clearSchool(){
+	  		this.optionSchool_val = '';
+	  		this.optionGrand = '';
+			this.optionGrand_val = null;
+	  	},
+	  	clearGrand(){
+	  		this.optionGrand_val = '';
+	  	},
+	  	clearTeacher(){
+	  		this.optionTeacher_val = '';
+	  	},
 	  	user_handle(obj,data){
 		  	this.optionTeacher = data.result.list;
 		  },
@@ -454,7 +482,7 @@
 		  timeFormat(row,column){
 		  	var date = row[column.property];  
 		  	if (date == undefined) {  
-		     return "";  
+		     return "";
 		  	}  
 		  	return this.timeF(date).format("YYYY-MM-DD HH:mm:ss");  
 		  },
@@ -499,7 +527,7 @@
 		  		}
 		  	})
 		  },
-		  renderContent(createElement, { node, data, store }) {
+		renderContent(createElement, { node, data, store }) {
         var self = this;  
         return createElement('span', [  
             createElement('span', node.label),  
@@ -660,7 +688,10 @@
         }).catch(() => {
         	
         });
-		  }
+		  },
+		sleectAll(){
+			ajax_data(this);
+		}
     },
     mounted:function(){
     	ajax_data(this);
