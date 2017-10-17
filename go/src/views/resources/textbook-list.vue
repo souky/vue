@@ -67,7 +67,7 @@
 	    </el-pagination>
     </div>
     
-    <el-dialog :visible.sync="dialogaddbook" :show-close="false" style="top:-14%">
+    <el-dialog :visible.sync="dialogaddbook" :close-on-click-modal="false" :show-close="false" style="top:-14%">
   		<div class="infoTitle" :model="infoTitles">{{infoTitles}}</div>
   		<div class="addBody fix" >
   			<el-form  label-width="80px" :model="textbook">
@@ -140,8 +140,8 @@
 			</div>
 		</el-dialog>
 		
-		<el-dialog :visible.sync="dialoginfobook" :show-close="true" >
-  		<div class="infoTitle">详情</div>
+		<el-dialog title="详情" :visible.sync="dialoginfobook" :close-on-click-modal="false" :show-close="true" :before-close="handleClose">
+  		<!-- <div class="infoTitle">详情</div> -->
   		<div class="infoBody fix" v-model="textbook">
   			<div class="leftPart l">
   				<div class="fix">
@@ -311,12 +311,17 @@
 			  		}
 				});
 			},
+			handleClose(done){
+       			this.addTextbookClose();
+       			done();
+       		},
 			addTextbookClose(){
 				this.textbook = {
         	id:null,
         	grade:'',
         	subject:'', 
         	publicationDate:'',
+        	coverImg:'',
        };
        this.bookSyllabuss = null;
        this.optionSchool_val = null;
@@ -622,4 +627,7 @@
 	
 	#textBook .el-dialog--tiny .infoBody{min-height: 80px;padding-top:40px}
 	#textBook .rightImg img{height: 100%}
+	#textBook .el-dialog__header{background:#66BB6A;text-align: center; border-top-left-radius: 4px; border-top-right-radius: 4px;}
+	#textBook .el-dialog__title{height: 50px; line-height: 50px; font-size: 16px; color: #fff; background: #66BB6A;font-weight:normal;
+}
 </style>
