@@ -9,7 +9,7 @@
         <el-col :span="4" class="pct25 mr20 ">
             <label class="mr20">学校  </label>
             <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="change_school()">
-                <<el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
         </el-col>
         <el-col :span="4" class="pct25 mr20">

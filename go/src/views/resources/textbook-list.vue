@@ -100,10 +100,13 @@
   				</div>
   				<div class="rightPart l tc">
   					<div style="margin-bottom: 10px;">课程图片</div>
-  					<el-upload class="" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
+  					<el-upload class="" 
+  					:action="Url" 
+  					:show-file-list="false"
+  					:with-credentials="true"
   					:on-success="handleAvatarSuccess"
-  					:before-upload="beforeAvatarUpload" :auto-upload="false">
-  						<img v-if="imageUrl" :src="imageUrl" class="avatar">
+  					:before-upload="beforeAvatarUpload">
+  						<img v-if="textbook.coverImg" :src="imageUrl" class="avatar">
   						<i v-else class="el-icon-plus avatar-uploader-icon" style="color:#bfcbd9;border-color:#bfcbd9"></i>
 						</el-upload>
   				</div>
@@ -167,7 +170,7 @@
   			<div class="rightPart l fix">
   				
   				<div class="r rightImg">
-  					<img src="">
+  					<img :src="baseUrl+textbook.coverImg">
   				</div>
   				<div class="r ml30">课程图片</div>
 				</div>
@@ -239,8 +242,11 @@
         	grade:'',
         	subject:'', 
         	publicationDate:'',
+        	coverImg:'',
         },
         imageUrl:'',
+        Url:'',
+        baseUrl:'',
         
         bookSyllabuss:null,
      		indents:20,
@@ -355,6 +361,7 @@
 			  				}
 			  				
 			  			});
+			  			obj.imageUrl=obj.baseUrl+obj.textbook.coverImg;
 			  		}else{
 			  			obj.notify_jr(obj,'错误','网络错误','error');
 			  		}
@@ -400,10 +407,23 @@
 		  object_handle(obj,data){
 		  	this.optionSubject = data.result;
 		  },
-		  handleAvatarSuccess(){
-		  	
-		  }, beforeAvatarUpload(){
-		  	
+		  handleAvatarSuccess(res, file){
+		  	this.imageUrl = URL.createObjectURL(file.raw);
+		  	this.textbook.coverImg = res.result.path;
+		  }, 
+		  beforeAvatarUpload(file){
+		  	const isJPG = file.type === 'image/jpeg';
+	        const isPNG = file.type === 'image/png';
+	        const isIMG = isJPG||isPNG;
+	        const isLt2M = file.size / 1024 / 1024 < 2;
+
+	        if (!isIMG) {
+	          this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
+	        }
+	        if (!isLt2M) {
+	          this.$message.error('上传头像图片大小不能超过 2MB!');
+	        }
+	        return isIMG && isLt2M;
 		  },
 		  creatNew(){
 		  	if(this.materialId!=''){
@@ -546,6 +566,8 @@
   		this.postHttp(this,data_code,"dictionary/getDictionarysBySupCode",this.object_handle);
 			var data = ajaxData(this);
 			init_tabel(this,data);
+			this.Url=this.getBaseUrl()+"uploadFile/upload";
+			this.baseUrl=this.getBaseUrl();
 		}
 		
   }
@@ -599,4 +621,5 @@
 	#textBook .el-tree-node__expand-icon{border-left-color:#202a33;}
 	
 	#textBook .el-dialog--tiny .infoBody{min-height: 80px;padding-top:40px}
+	#textBook .rightImg img{height: 100%}
 </style>

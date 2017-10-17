@@ -37,7 +37,7 @@ new Vue({
 });
 var querystring = require('querystring');
 
-const baseUrl = "http://192.168.1.213:8080/balanced-education/";
+const baseUrl = "http://192.168.128.176:8080/balanced-education/";
 
 Vue.prototype.postHttp = function(obj,data,address,fn){
 	obj.$axios.post(baseUrl+address,querystring.stringify(data),{withCredentials : true}).then(response => {
@@ -74,6 +74,9 @@ Vue.prototype.getHttp = function(obj,data,address,fn){
 	})
 }
 
+Vue.prototype.getBaseUrl = function(){
+	return baseUrl;
+}
 
 
 
