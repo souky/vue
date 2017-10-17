@@ -122,7 +122,7 @@
 	    </el-pagination>
     </div>
     
-    <el-dialog :visible.sync="dialogAdd" id="addCrouse" :show-close="false" style="top:-14%">
+    <el-dialog :visible.sync="dialogAdd" :close-on-click-modal="false" id="addCrouse" :show-close="false" style="top:-14%">
   		<div class="infoTitle" :model="infoTitles">{{infoTitles}}</div>
   		<div class="addBody fix" >
   			<el-form :label-position="labelPosition" label-width="80px" :model="course">

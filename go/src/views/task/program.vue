@@ -494,6 +494,17 @@
   	  },
   	  programInit(obj,data){
 	    this.tableData = data.result.list;
+	    for(var i=0;i<this.tableData.length;i++){
+	    	if(this.tableData[i].status == '2_NOT_STARTED'){
+	    		this.tableData[i].status = '未开始'
+	    	}else if(this.tableData[i].status == '1_ONGOING'){
+	    		this.tableData[i].status = '进行中'
+	    	}else if(this.this.tableData[i].status == '3_ENDED'){
+	    		this.tableData[i].status = '已结束'
+	    	}else{
+	    		this.tableData[i].status = '异常'
+	    	}
+	    }
 	    this.pageNum = data.result.pageNum;
 	    this.pageSize = data.result.pageSize;
 	    this.totals = data.result.total;
