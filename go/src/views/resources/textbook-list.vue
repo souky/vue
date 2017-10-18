@@ -67,7 +67,7 @@
 	    </el-pagination>
     </div>
     
-    <el-dialog :visible.sync="dialogaddbook" :close-on-click-modal="false" :show-close="false" style="top:-14%">
+    <el-dialog :visible.sync="dialogaddbook" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" style="top:-14%">
   		<div class="infoTitle" :model="infoTitles">{{infoTitles}}</div>
   		<div class="addBody fix" >
   			<el-form  label-width="80px" :model="textbook">
@@ -140,7 +140,7 @@
 			</div>
 		</el-dialog>
 		
-		<el-dialog title="详情" :visible.sync="dialoginfobook" :close-on-click-modal="false" :show-close="true" :before-close="handleClose">
+		<el-dialog title="详情" :visible.sync="dialoginfobook" :close-on-press-escape="false" :close-on-click-modal="false" :show-close="true" :before-close="handleClose">
   		<!-- <div class="infoTitle">详情</div> -->
   		<div class="infoBody fix" v-model="textbook">
   			<div class="leftPart l">
@@ -185,7 +185,7 @@
 		</el-dialog>
 		
 		
-		<el-dialog :visible.sync="text_add" size="tiny" :show-close="true" >
+		<el-dialog :visible.sync="text_add" size="tiny" :show-close="true">
   		<div class="infoTitle">添加大纲</div>
   		<div class="infoBody fix" >
   			<el-form  label-width="80px" :model="text_infos" :rules="rules" ref="ruleForms"  class="demo-form-inline">
