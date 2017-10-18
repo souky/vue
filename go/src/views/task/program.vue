@@ -88,8 +88,8 @@
 		    </el-pagination>
         </div>
         
-        <el-dialog :visible.sync="dialogInfo" :show-close="true" style="top:-14%">
-        	<div class="infoTitle">详情</div>
+        <el-dialog :visible.sync="dialogInfo"style="top:-14%" title="详情" :close-on-press-escape="false" :close-on-click-modal="false" :show-close="true" :before-close="handleClose">
+        	<!-- <div class="infoTitle">详情</div> -->
         	<div class="infoBody" v-model="program">
         		<div class="secondTitle">节目信息</div>
         		<div class="fix">
@@ -174,7 +174,7 @@
     	<el-dialog :visible.sync="dialogShow" :before-close="show_close" id="playVideo" :show-close="fasle">
     	</el-dialog>
     	
-    	<el-dialog :visible.sync="dialogEdit" :show-close="false" style="top:-14%">
+    	<el-dialog :visible.sync="dialogEdit" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" style="top:-14%">
     		<el-tabs v-model="activeName">
 			    <el-tab-pane label="节目详情" name="first">
 			    	<div class="editBody">
@@ -375,6 +375,13 @@
       }
     },
 	methods: {
+		handleClose(done){
+       		this.clearData();
+       		done();
+       	},
+       	clearData(){
+       		this.program={};
+       	},
       dialogInfos(id){
       	this.dialogInfo = true;
       	var data = {id:id};
@@ -677,4 +684,6 @@
     #program .editBody .el-select .el-input__inner{width:220px;}
     
     #program .el-tabs__nav-wrap{border-top-left-radius: 4px;border-top-right-radius: 4px;}
+    #program .el-dialog__header{background:#66BB6A;text-align: center; border-top-left-radius: 4px; border-top-right-radius: 4px;}
+	#program .el-dialog__title{height: 50px; line-height: 50px; font-size: 16px; color: #fff; background: #66BB6A;font-weight:normal;}
 </style>

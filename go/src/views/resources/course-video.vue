@@ -99,7 +99,7 @@
 	    </el-pagination>
     </div>
     
-    <el-dialog :visible.sync="dialogUpload" :show-close="false" >
+    <el-dialog :visible.sync="dialogUpload" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
   		<div class="infoTitle" :model="textChioce">{{textChioce}}</div>
   		<div class="editBody fix">
   			<el-form :inline="true" :model="course" class="demo-form-inline">
@@ -149,7 +149,7 @@
 		</el-dialog>
 		
 		
-		<el-dialog :visible.sync="dialogEdit" :show-close="false" >
+		<el-dialog :visible.sync="dialogEdit" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
   		<div class="infoTitle">修改资源</div>
   		<div class="editBody fix">
   			<el-form :inline="true" :model="course" class="demo-form-inline">

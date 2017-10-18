@@ -628,6 +628,5 @@
 	#textBook .el-dialog--tiny .infoBody{min-height: 80px;padding-top:40px}
 	#textBook .rightImg img{height: 100%}
 	#textBook .el-dialog__header{background:#66BB6A;text-align: center; border-top-left-radius: 4px; border-top-right-radius: 4px;}
-	#textBook .el-dialog__title{height: 50px; line-height: 50px; font-size: 16px; color: #fff; background: #66BB6A;font-weight:normal;
-}
+	#textBook .el-dialog__title{height: 50px; line-height: 50px; font-size: 16px; color: #fff; background: #66BB6A;font-weight:normal;}
 </style>
