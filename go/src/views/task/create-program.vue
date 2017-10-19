@@ -101,7 +101,7 @@
       </div>
     </div>
 		
-		<el-dialog :visible.sync="dialog_program" :show-close="false">
+		<el-dialog :visible.sync="dialog_program" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
     	<div class="infoTitle">新建节目单</div>
   		<div class="editBody">
 	    	<el-form :inline="true" :model="program" class="demo-form-inline">
