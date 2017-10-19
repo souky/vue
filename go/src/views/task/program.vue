@@ -11,25 +11,25 @@
         <el-row type="flex" class="row-bg mt20 pl20" justify="start">
             <el-col :span="4" class="pct25 mr20 ">
                 <label class="mr20">学校  </label>
-                <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="school_chage_q()">
+                <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="school_chage_q()" clearable>
 		            <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
 		        </el-select>
             </el-col>
             <el-col :span="4" class="pct25 mr20">
                 <label class="mr20">年级</label>
-                <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级">
+                <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级" clearable>
 	                <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
 	            </el-select>
             </el-col>
             <el-col :span="4" class="pct25 mr20">
                 <label class="mr20">教师</label>
-                <el-select v-model="optionTeacher_val" class="pct70" placeholder="请选择教师">
+                <el-select v-model="optionTeacher_val" class="pct70" placeholder="请选择教师" clearable>
 	                <el-option v-for="item in optionTeacher" :key="item.id" :label="item.name" :value="item.id"></el-option>
 	            </el-select>
             </el-col>
             <el-col :span="4" class="pct25">
                 <label class="mr20">学科</label>
-                <el-select v-model="optionSubject_val" class="pct70" placeholder="请选择学科">
+                <el-select v-model="optionSubject_val" class="pct70" placeholder="请选择学科" clearable>
 	                <el-option v-for="item in optionSubject" :key="item.dicCode" :label="item.dicName" :value="item.dicCode"></el-option>
 	            </el-select>
             </el-col>

@@ -5,26 +5,26 @@
 	    <!-- 节目类型 -->
 	    <el-col :span="4" class="pct25 mr20">
 	      <label class="mr20">节目类型</label>
-	      <el-select v-model="progarm_type" class="pct70" placeholder="请选择节目类型">
+	      <el-select v-model="progarm_type" class="pct70" placeholder="请选择节目类型" clearable>
 	         <el-option v-for="item in type_option" :key="item.value" :label="item.label" :value="item.value">
 	        </el-option>
 	      </el-select>
 	    </el-col>
 	    <el-col :span="4" class="pct25 mr20">
 	        <label class="mr20">学校  </label>
-	        <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="school_chage_q()">
+	        <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="school_chage_q()" clearable>
 		            <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
 		        </el-select>
 	    </el-col>
 	    <el-col :span="4" class="pct25 mr20">
 	    		<label class="mr20">年级</label>
-	        <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级" @change="grand_chage_q()">
+	        <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级" @change="grand_chage_q()" clearable>
 	            <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
 	        </el-select>
 	    </el-col>
 	    <el-col :span="4" class="pct25 mr20" >
 	   		<label class="mr20">班级</label>
-	        <el-select v-model="optionClass_val" class="pct70" placeholder="请选择班级">
+	        <el-select v-model="optionClass_val" class="pct70" placeholder="请选择班级" clearable>
 	            <el-option v-for="item in optionClass" :key="item.id" :label="item.name" :value="item.id"></el-option>
 	        </el-select>
 	    </el-col>

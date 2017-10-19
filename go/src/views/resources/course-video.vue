@@ -8,25 +8,25 @@
     <el-row type="flex" class="row-bg pt20 pl20" justify="start">
         <el-col :span="4" class="pct25 mr20 ">
             <label class="mr20">学校  </label>
-            <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="change_school()">
+            <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="change_school()" clearable>
                 <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
         </el-col>
         <el-col :span="4" class="pct25 mr20">
             <label class="mr20">年级</label>
-            <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级">
+            <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级" clearable>
                 <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
         </el-col>
         <el-col :span="4" class="pct25 mr20">
             <label class="mr20">教师</label>
-            <el-select v-model="optionTeacher_val" class="pct70" placeholder="请选择教师">
+            <el-select v-model="optionTeacher_val" class="pct70" placeholder="请选择教师" clearable>
                 <el-option v-for="item in optionTeacher" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
         </el-col>
         <el-col :span="4" class="pct25">
             <label class="mr20">学科</label>
-            <el-select v-model="optionSubject_val" class="pct70" placeholder="请选择学科" >
+            <el-select v-model="optionSubject_val" class="pct70" placeholder="请选择学科" clearable>
                 <el-option v-for="item in optionSubject" :key="item.dicName" :label="item.dicName" :value="item.dicName"></el-option>
             </el-select>
         </el-col>
@@ -113,7 +113,7 @@
 			      <!--<el-input v-model="course.name" icon="search"></el-input>-->
 			    </el-form-item><br />
 			    <el-form-item label="是否公开" style="width: 45%;padding-left: 4%;">
-			    	<el-radio-group  style="margin-left:30px;" v-model="course.ispublic">
+			    	<el-radio-group  style="margin-left:30px;" v-model="course.isPublic">
 				      <el-radio :label="1" name="isCourse">是</el-radio>
 				      <el-radio :label="0" name="isCourse">否</el-radio>
 				    </el-radio-group>
@@ -234,7 +234,7 @@
 			upload(){
 				this.dialogUpload = true;
 				this.course={
-		    	ispublic:1,
+		    	isPublic:1,
 		    	schoolId:'',
 		    	subject:'',
 		    	gradeId:'',
