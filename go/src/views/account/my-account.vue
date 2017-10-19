@@ -89,11 +89,14 @@
   				</div>
   				<div class="rightPart l tc">
   					<div style="margin-bottom: 10px;">用户头像</div>
-  					<el-upload class="" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
+						<el-upload class="" 
+  					:action="Url" 
+  					:show-file-list="false"
+  					:with-credentials="true"
   					:on-success="handleAvatarSuccess"
-  					 :auto-upload="false">
+  					:before-upload="beforeAvatarUpload">
   						<img v-if="user.img" :src="user.img" class="avatar">
-  						<i v-else class="el-icon-plus avatar-uploader-icon" style="color:#bfcbd9;"></i>
+  						<i v-else class="el-icon-plus avatar-uploader-icon" style="color:#bfcbd9;border-color:#bfcbd9"></i>
 						</el-upload>
   				</div>
   				<div class="l" style="width:90%;">
@@ -177,7 +180,12 @@
         msg:'hello vue',
         dialogedit:false,
         dialogpass:false,
-        user:{},
+        user:{
+        	organization:{name:''},
+        	name:'',
+        	realname:'',
+        	
+        },
         optionSchool:null,
         infoTitles:'',
         psw:'',
@@ -194,18 +202,37 @@
           newPsw2s: [
             { validator: validatePass3, trigger: 'blur' }
           ],
-        }
+        },
+        
+        Url:''
       }
     },
     methods:{
     	initUserData(obj,data){
-    		this.user = data.result;
+    		this.user = data.result.user;
+    		var baseUrl = this.getBaseUrl();
+    		this.user.img = baseUrl + this.user.img
     		delete this.user["createDate"];
     		delete this.user["updateDate"];
     	},
-    	handleAvatarSuccess(){
-    		
-    	},
+    	handleAvatarSuccess(res, file){
+		  	var baseUrl = this.getBaseUrl();
+    		this.user.img = baseUrl + res.result.path
+		  }, 
+		  beforeAvatarUpload(file){
+		  	const isJPG = file.type === 'image/jpeg';
+	        const isPNG = file.type === 'image/png';
+	        const isIMG = isJPG||isPNG;
+	        const isLt2M = file.size / 1024 / 1024 < 2;
+
+	        if (!isIMG) {
+	          this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
+	        }
+	        if (!isLt2M) {
+	          this.$message.error('上传头像图片大小不能超过 2MB!');
+	        }
+	        return isIMG && isLt2M;
+		  },
     	open_update(){
     		this.get_options(this,"","optionSchool");
     		this.dialogedit = true;
@@ -216,6 +243,9 @@
     		this.dialogedit = false;
     	},
     	update_user(){
+				delete this.user["organization"];
+				var baseUrl = this.getBaseUrl();
+				this.user.img = this.user.img.replace(baseUrl,"");
     		this.postHttp(this,this.user,"user/updateUser",this.ajax_handle);
     	},
     	open_pass(){
@@ -247,6 +277,7 @@
     		if(data.code=="10000"){
     			this.notify_jr(this,this.infoTitles,'操作成功','success');
     			initUser(this,this.initUserData);
+    			this.dialogedit = false;
     			if(this.flagLogin){
     				this.postHttp(this,data,"logout",null);
 						this.$router.push({ path: '/login' });
@@ -260,6 +291,7 @@
     },
     mounted:function(){
     	initUser(this,this.initUserData);
+    	this.Url=this.getBaseUrl()+"uploadFile/upload";
     }
     
   }
