@@ -161,10 +161,13 @@
   				</div>
   				<div class="rightPart l tc">
   					<div style="margin-bottom: 10px;">课程图片</div>
-  					<el-upload class="" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
+  					<el-upload class="" 
+  					:action="Url"
+  					:show-file-list="false"
+  					:with-credentials="true"
   					:on-success="handleAvatarSuccess"
-  					:before-upload="beforeAvatarUpload" :auto-upload="false">
-  						<img v-if="imageUrl" :src="imageUrl" class="avatar">
+  					:before-upload="beforeAvatarUpload" >
+  						<img v-if="course.coverImg" :src="imageUrl" class="avatar">
   						<i v-else class="el-icon-plus avatar-uploader-icon" style="color:#bfcbd9;"></i>
 						</el-upload>
   				</div>
@@ -316,6 +319,8 @@
         total:0,
         tableData:[],
         imageUrl:'',
+        Url:'',
+        baseUrl:'',
         labelPosition: 'right',
         infoTitles:'',
         
@@ -364,7 +369,8 @@
 	  				}else{
 	  					obj.courseSyllabuss = data.result;
 	  				}
-	  			})
+	  			});
+	  			obj.imageUrl=obj.baseUrl+obj.course.coverImg;
 		  	})
 		  },
 		  dialogAdds(){
@@ -439,20 +445,25 @@
 		  	this.pageNum = val;
   			ajax_data(this);
 		  },
-		  handleAvatarSuccess(res, file) {
+	  handleAvatarSuccess(res, file) {
+
         this.imageUrl = URL.createObjectURL(file.raw);
+        console.log(this.course.imageUrl);
+        this.course.imageUrl = res.result.path;
       },
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
+        const isPNG = file.type === 'image/png';
+        const isIMG = isJPG||isPNG;
         const isLt2M = file.size / 1024 / 1024 < 2;
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
+        if (!isIMG) {
+          this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
         }
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 2MB!');
         }
-        return isJPG && isLt2M;
+        return isIMG && isLt2M;
       },
       school_chage_q(){
 				var id = this.optionSchool_val;
@@ -700,6 +711,8 @@
 	  	this.postHttp(this,data_user,"user/queryUsers",this.user_handle);
 	  	var data_code ={code:'SUBJECT'};
 	  	this.postHttp(this,data_code,"dictionary/getDictionarysBySupCode",this.object_handle);
+	  	this.Url=this.getBaseUrl()+"uploadFile/upload";
+		this.baseUrl=this.getBaseUrl();
     }
 
   }
