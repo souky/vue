@@ -3,19 +3,19 @@
     <el-row type="flex" class="row-bg pt20 pl20" justify="start">
        	<el-col :span="4" class="pct25 mr20 ">
             <label class="mr20">学校  </label>
-            <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="school_chage_q()">
+            <el-select v-model="optionSchool_val" class="pct70" placeholder="请选择学校" @change="school_chage_q()" clearable>
 	            <el-option v-for="item in optionSchool" :key="item.id" :label="item.name" :value="item.id"></el-option>
 	        	</el-select>
         </el-col>
         <el-col :span="4" class="pct25 mr20">
             <label class="mr20">年级</label>
-            <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级">
+            <el-select v-model="optionGrand_val" class="pct70" placeholder="请选择年级" clearable>
                 <el-option v-for="item in optionGrand" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
         </el-col>
         <el-col :span="4" class="pct25">
             <label class="mr20">学科</label>
-            <el-select v-model="optionSubject_val" class="pct70" placeholder="请选择学科">
+            <el-select v-model="optionSubject_val" class="pct70" placeholder="请选择学科" clearable>
                 <el-option v-for="item in optionSubject" :key="item.dicCode" :label="item.dicName" :value="item.dicCode"></el-option>
             </el-select>
         </el-col>
@@ -276,6 +276,11 @@
 				this.infoTitles = "新增教材";
 				this.dialogaddbook = true;
 				this.isEdit = true;
+			},
+			query_program(){
+				 this.postHttp(this,{orgId:this.optionSchool_val,grade:this.optionGrand_val,subject:this.optionSubject_val,press:this.name_q,pageNum:this.pageNum,pageSize:this.pageSize},"material/queryMaterials",function(obj,data){
+			        obj.tableData=data.result.list;
+			    });
 			},
 			savetextBook(){
 				var data = this.textbook;

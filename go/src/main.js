@@ -74,9 +74,6 @@ Vue.prototype.getHttp = function(obj,data,address,fn){
 	})
 }
 
-Vue.prototype.getBaseUrl = function(){
-	return baseUrl;
-}
 
 
 
